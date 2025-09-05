@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay - Basic Integration Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .property-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .property-info {
+            padding: 15px;
+        }
+        
+        .property-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 8px 0;
+        }
+        
+        .property-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .integration-info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .integration-info h2 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .status.error {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DinoOverlay Basic Integration Example</h1>
+        
+        <div class="integration-info">
+            <h2>🚀 Integration Status</h2>
+            <p>This page demonstrates the basic DinoOverlay integration. The script will automatically detect images with the <code>.editable-room</code> class and add interactive overlays.</p>
+            
+            <h3>Script Integration:</h3>
+            <div class="code-block">
+&lt;script&gt;
+  (function(){
+    var s=document.createElement('script');
+    s.src="https://cdn.dinooverlay.com/v1/dino-overlay-1.0.0.js";
+    s.integrity="sha384-[hash-will-be-generated]";
+    s.crossOrigin="anonymous";
+    s.async=true;
+    s.onload=function(){
+      DinoOverlayLoader.init({
+        apiKey: 'demo-api-key',
+        apiEndpoint: 'https://api.dinooverlay.com',
+        debug: true
+      });
+    };
+    document.head.appendChild(s);
+  })();
+&lt;/script&gt;
+            </div>
+            
+            <p><strong>Note:</strong> This is a demo using placeholder images. In production, replace 'demo-api-key' with your actual API key.</p>
+        </div>
+        
+        <div class="property-grid">
+            <div class="property-card">
+                <img 
+                    src="../public/placeholder.jpg" 
+                    alt="Modern Living Room" 
+                    class="property-image editable-room"
+                    data-room-type="living-room"
+                    data-property-id="prop-001"
+                />
+                <div class="property-info">
+                    <h3 class="property-title">Modern Living Room</h3>
+                    <p class="property-description">Spacious living area with contemporary furniture and large windows providing natural light.</p>
+                </div>
+            </div>
+            
+            <div class="property-card">
+                <img 
+                    src="../public/placeholder.jpg" 
+                    alt="Contemporary Kitchen" 
+                    class="property-image editable-room"
+                    data-room-type="kitchen"
+                    data-property-id="prop-002"
+                />
+                <div class="property-info">
+                    <h3 class="property-title">Contemporary Kitchen</h3>
+                    <p class="property-description">Fully equipped kitchen with modern appliances and sleek countertops.</p>
+                </div>
+            </div>
+            
+            <div class="property-card">
+                <img 
+                    src="../public/placeholder.jpg" 
+                    alt="Master Bedroom" 
+                    class="property-image editable-room"
+                    data-room-type="bedroom"
+                    data-property-id="prop-003"
+                />
+                <div class="property-info">
+                    <h3 class="property-title">Master Bedroom</h3>
+                    <p class="property-description">Comfortable master bedroom with built-in wardrobes and en-suite bathroom.</p>
+                </div>
+            </div>
+            
+            <div class="property-card">
+                <img 
+                    src="../public/placeholder.jpg" 
+                    alt="Dining Area" 
+                    class="property-image editable-room"
+                    data-room-type="dining"
+                    data-property-id="prop-004"
+                />
+                <div class="property-info">
+                    <h3 class="property-title">Dining Area</h3>
+                    <p class="property-description">Elegant dining space perfect for entertaining guests and family meals.</p>
+                </div>
+            </div>
+            
+            <!-- Non-editable image for comparison -->
+            <div class="property-card">
+                <img 
+                    src="../public/placeholder.jpg" 
+                    alt="Exterior View" 
+                    class="property-image"
+                />
+                <div class="property-info">
+                    <h3 class="property-title">Exterior View (Not Editable)</h3>
+                    <p class="property-description">This image doesn't have the .editable-room class, so no overlay will appear.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="status" class="status"></div>
+    
+    <!-- DinoOverlay Integration Script -->
+    <script>
+        // Status display helper
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = isError ? 'status error' : 'status';
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Basic DinoOverlay integration
+        (function(){
+            var s = document.createElement('script');
+            s.src = "../dist/dino-overlay.iife.js"; // Using local build for demo
+            s.async = true;
+            
+            s.onload = function(){
+                try {
+                    if (window.DinoOverlay && window.DinoOverlay.init) {
+                        window.DinoOverlay.init({
+                            apiKey: 'demo-api-key-12345',
+                            apiEndpoint: 'https://api.dinooverlay.com',
+                            theme: 'auto',
+                            enableAnalytics: false, // Disabled for demo
+                            debug: true,
+                            customActions: [
+                                { 
+                                    id: 'modern', 
+                                    label: 'Modern Style', 
+                                    prompt: 'Apply modern minimalist styling with clean lines' 
+                                },
+                                { 
+                                    id: 'cozy', 
+                                    label: 'Cozy Atmosphere', 
+                                    prompt: 'Create a warm, cozy atmosphere with soft lighting' 
+                                }
+                            ]
+                        });
+                        
+                        showStatus('✅ DinoOverlay loaded successfully! Click on any room image to start editing.');
+                        
+                        // Log loaded components for debugging
+                        if (window.DinoOverlay.loadedComponents) {
+                            console.log('Loaded components:', window.DinoOverlay.loadedComponents);
+                        }
+                    } else {
+                        throw new Error('DinoOverlay object not found');
+                    }
+                } catch (error) {
+                    console.error('DinoOverlay initialization failed:', error);
+                    showStatus('❌ DinoOverlay initialization failed: ' + error.message, true);
+                }
+            };
+            
+            s.onerror = function() {
+                console.error('DinoOverlay script failed to load');
+                showStatus('❌ DinoOverlay script failed to load. Check console for details.', true);
+            };
+            
+            document.head.appendChild(s);
+        })();
+        
+        // Demo event listeners for debugging
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, DinoOverlay should initialize soon...');
+            
+            // Add click listeners to demonstrate functionality
+            const editableImages = document.querySelectorAll('.editable-room');
+            console.log(`Found ${editableImages.length} editable room images`);
+            
+            editableImages.forEach((img, index) => {
+                img.addEventListener('click', function() {
+                    console.log(`Clicked on editable image ${index + 1}:`, {
+                        src: img.src,
+                        alt: img.alt,
+                        roomType: img.dataset.roomType,
+                        propertyId: img.dataset.propertyId
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

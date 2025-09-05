@@ -1,0 +1,6 @@
+{
+  "script-src": "'self' https://cdn.dinooverlay.com https://backup-cdn.dinooverlay.com 'sha384-pQDnBTnbChB3fgJXCARgfoDNzDwCONpvqK4CGDIXFaaKBieD6PHr1u9loIFBWKjl sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu sha384-070IklUck0YB2zvNbvQGH4Hdgx9mxcylnaoMqBpt7eZOYyRIiFK50Ddn2TD/6K4t'",
+  "connect-src": "'self' https://api.dinooverlay.com",
+  "img-src": "'self' data: https://api.dinooverlay.com",
+  "style-src": "'self' 'unsafe-inline'"
+}

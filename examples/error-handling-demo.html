@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay Error Handling Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+        }
+        
+        .demo-section h3 {
+            color: #555;
+            margin-top: 0;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: transform 0.2s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .status.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .editable-room {
+            width: 200px;
+            height: 150px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"><rect width="200" height="150" fill="%23f3f4f6"/><text x="100" y="75" text-anchor="middle" fill="%23374151" font-family="Arial" font-size="14">Sample Room Image</text></svg>');
+            border-radius: 12px;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .editable-room:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦕 DinoOverlay Error Handling Demo</h1>
+        
+        <div class="demo-section">
+            <h3>Network Error Simulation</h3>
+            <p>Test different network error scenarios and see how the ErrorManager handles them.</p>
+            <button onclick="simulateNetworkTimeout()">Simulate Timeout</button>
+            <button onclick="simulateNetworkError()">Simulate Network Error</button>
+            <button onclick="simulateRateLimit()">Simulate Rate Limit</button>
+            <button onclick="simulateServerError()">Simulate Server Error</button>
+            <div id="network-status" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>Image Processing Errors</h3>
+            <p>Test image-related error handling scenarios.</p>
+            <button onclick="simulateInvalidFormat()">Invalid Format</button>
+            <button onclick="simulateImageTooLarge()">Image Too Large</button>
+            <button onclick="simulateProcessingFailed()">Processing Failed</button>
+            <button onclick="simulateCorruptedImage()">Corrupted Image</button>
+            <div id="image-status" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>Configuration Errors</h3>
+            <p>Test configuration and setup error scenarios.</p>
+            <button onclick="simulateInvalidApiKey()">Invalid API Key</button>
+            <button onclick="simulateMissingConfig()">Missing Config</button>
+            <button onclick="simulateInvalidEndpoint()">Invalid Endpoint</button>
+            <div id="config-status" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>DOM Errors</h3>
+            <p>Test DOM-related error scenarios.</p>
+            <button onclick="simulatePermissionDenied()">Permission Denied</button>
+            <button onclick="simulateElementNotFound()">Element Not Found</button>
+            <button onclick="simulateShadowDOMError()">Shadow DOM Error</button>
+            <div id="dom-status" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>Retry Logic Demo</h3>
+            <p>Test the retry mechanism with different error types.</p>
+            <button onclick="testRetryLogic()">Test Retry Logic</button>
+            <button onclick="clearRetryAttempts()">Clear Retry Attempts</button>
+            <div id="retry-status" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>Sample Room Image</h3>
+            <p>This image has the <code>.editable-room</code> class for testing.</p>
+            <div class="editable-room" onclick="selectImage(this)"></div>
+            <div id="image-selection-status" class="status" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock DinoOverlay components for demo
+        class MockErrorManager {
+            constructor() {
+                this.retryAttempts = new Map();
+                this.config = {
+                    maxRetryAttempts: 3,
+                    retryBaseDelay: 1000,
+                    enableUserNotifications: true,
+                    debug: true
+                };
+            }
+            
+            handleNetworkError(error) {
+                const errorDetails = {
+                    category: 'network',
+                    code: this.getNetworkErrorCode(error),
+                    message: error.message,
+                    userMessage: this.getNetworkErrorMessage(error),
+                    retryable: true,
+                    context: { timestamp: Date.now() }
+                };
+                
+                this.showUserError(errorDetails);
+                return errorDetails;
+            }
+            
+            handleImageError(error) {
+                const errorDetails = {
+                    category: 'image',
+                    code: this.getImageErrorCode(error),
+                    message: error.message,
+                    userMessage: this.getImageErrorMessage(error),
+                    retryable: error.message.includes('processing'),
+                    context: { timestamp: Date.now() }
+                };
+                
+                this.showUserError(errorDetails);
+                return errorDetails;
+            }
+            
+            handleConfigError(error) {
+                const errorDetails = {
+                    category: 'config',
+                    code: this.getConfigErrorCode(error),
+                    message: error.message,
+                    userMessage: this.getConfigErrorMessage(error),
+                    retryable: false,
+                    context: { timestamp: Date.now() }
+                };
+                
+                this.showUserError(errorDetails);
+                return errorDetails;
+            }
+            
+            handleDOMError(error) {
+                const errorDetails = {
+                    category: 'dom',
+                    code: this.getDOMErrorCode(error),
+                    message: error.message,
+                    userMessage: this.getDOMErrorMessage(error),
+                    retryable: false,
+                    context: { timestamp: Date.now() }
+                };
+                
+                this.showUserError(errorDetails);
+                return errorDetails;
+            }
+            
+            handleAPIError(error) {
+                const errorDetails = {
+                    category: error.status === 429 ? 'rate_limit' : 'api',
+                    code: `HTTP_${error.status}`,
+                    message: error.message,
+                    userMessage: this.getAPIErrorMessage(error),
+                    retryable: error.status >= 500 || error.status === 429,
+                    retryAfter: error.status === 429 ? 60 : undefined,
+                    context: { status: error.status, timestamp: Date.now() }
+                };
+                
+                this.showUserError(errorDetails);
+                return errorDetails;
+            }
+            
+            shouldRetry(errorDetails) {
+                if (!errorDetails.retryable) return false;
+                
+                const key = `${errorDetails.category}:${errorDetails.code}`;
+                const attempts = this.retryAttempts.get(key) || [];
+                return attempts.length < this.config.maxRetryAttempts;
+            }
+            
+            recordRetryAttempt(errorDetails) {
+                const key = `${errorDetails.category}:${errorDetails.code}`;
+                const attempts = this.retryAttempts.get(key) || [];
+                attempts.push({ timestamp: Date.now(), attempt: attempts.length + 1 });
+                this.retryAttempts.set(key, attempts);
+            }
+            
+            clearRetryAttempts(errorDetails) {
+                const key = `${errorDetails.category}:${errorDetails.code}`;
+                this.retryAttempts.delete(key);
+            }
+            
+            calculateRetryDelay(errorDetails) {
+                if (errorDetails.retryAfter) {
+                    return errorDetails.retryAfter * 1000;
+                }
+                
+                const key = `${errorDetails.category}:${errorDetails.code}`;
+                const attempts = this.retryAttempts.get(key) || [];
+                const delay = this.config.retryBaseDelay * Math.pow(2, attempts.length);
+                return Math.min(delay, 30000);
+            }
+            
+            showUserError(errorDetails) {
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = 'dino-error-notification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(239, 68, 68, 0.95);
+                    backdrop-filter: blur(10px);
+                    color: white;
+                    padding: 16px 20px;
+                    border-radius: 12px;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                    max-width: 400px;
+                    z-index: 10000;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                
+                notification.innerHTML = `
+                    <div>${errorDetails.userMessage}</div>
+                    ${errorDetails.retryable ? '<div style="margin-top: 8px; font-size: 12px; opacity: 0.8;">Retrying automatically...</div>' : ''}
+                    <button onclick="this.parentNode.remove()" style="position: absolute; top: 8px; right: 12px; background: none; border: none; color: white; font-size: 18px; cursor: pointer; opacity: 0.7;">×</button>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
+            
+            // Helper methods for error code determination
+            getNetworkErrorCode(error) {
+                const message = error.message.toLowerCase();
+                if (message.includes('timeout')) return 'NETWORK_TIMEOUT';
+                if (message.includes('rate limit')) return 'RATE_LIMIT_EXCEEDED';
+                if (message.includes('server error')) return 'HTTP_500';
+                return 'NETWORK_UNKNOWN';
+            }
+            
+            getImageErrorCode(error) {
+                const message = error.message.toLowerCase();
+                if (message.includes('format')) return 'INVALID_FORMAT';
+                if (message.includes('size')) return 'SIZE_ERROR';
+                if (message.includes('processing')) return 'PROCESSING_FAILED';
+                if (message.includes('corrupt')) return 'CORRUPTED_IMAGE';
+                return 'IMAGE_UNKNOWN';
+            }
+            
+            getConfigErrorCode(error) {
+                const message = error.message.toLowerCase();
+                if (message.includes('api key')) return 'INVALID_API_KEY';
+                if (message.includes('endpoint')) return 'INVALID_ENDPOINT';
+                if (message.includes('missing')) return 'MISSING_CONFIG';
+                return 'CONFIG_UNKNOWN';
+            }
+            
+            getDOMErrorCode(error) {
+                const message = error.message.toLowerCase();
+                if (message.includes('permission')) return 'PERMISSION_DENIED';
+                if (message.includes('not found')) return 'ELEMENT_NOT_FOUND';
+                if (message.includes('shadow')) return 'SHADOW_DOM_ERROR';
+                return 'DOM_UNKNOWN';
+            }
+            
+            // Helper methods for user messages
+            getNetworkErrorMessage(error) {
+                const code = this.getNetworkErrorCode(error);
+                switch (code) {
+                    case 'NETWORK_TIMEOUT':
+                        return 'Request timed out. Please check your connection and try again.';
+                    case 'RATE_LIMIT_EXCEEDED':
+                        return 'Too many requests. Please wait a moment before trying again.';
+                    case 'HTTP_500':
+                        return 'Service temporarily unavailable. Please try again in a few moments.';
+                    default:
+                        return 'Unable to connect to AI service. Please check your connection.';
+                }
+            }
+            
+            getImageErrorMessage(error) {
+                const code = this.getImageErrorCode(error);
+                switch (code) {
+                    case 'INVALID_FORMAT':
+                        return 'Image format not supported. Please use JPG, PNG, or WebP images.';
+                    case 'SIZE_ERROR':
+                        return 'Image is too large. Please use an image smaller than 10MB.';
+                    case 'PROCESSING_FAILED':
+                        return 'Image processing failed. Please try a different image or prompt.';
+                    case 'CORRUPTED_IMAGE':
+                        return 'Image appears to be corrupted. Please try a different image.';
+                    default:
+                        return 'Image processing failed. Please try a different image.';
+                }
+            }
+            
+            getConfigErrorMessage(error) {
+                const code = this.getConfigErrorCode(error);
+                switch (code) {
+                    case 'INVALID_API_KEY':
+                        return 'Invalid API configuration. Please contact the website administrator.';
+                    case 'INVALID_ENDPOINT':
+                        return 'Service configuration error. Please contact support.';
+                    case 'MISSING_CONFIG':
+                        return 'Missing configuration. Please contact the website administrator.';
+                    default:
+                        return 'Configuration error. Please contact the website administrator.';
+                }
+            }
+            
+            getDOMErrorMessage(error) {
+                const code = this.getDOMErrorCode(error);
+                switch (code) {
+                    case 'PERMISSION_DENIED':
+                        return 'Browser permissions required. Please allow the requested permissions.';
+                    case 'ELEMENT_NOT_FOUND':
+                        return 'Page element not found. Please refresh the page and try again.';
+                    case 'SHADOW_DOM_ERROR':
+                        return 'Browser compatibility issue. Please try a different browser.';
+                    default:
+                        return 'Browser compatibility issue. Please update or try a different browser.';
+                }
+            }
+            
+            getAPIErrorMessage(error) {
+                if (error.status === 429) {
+                    return 'Too many requests. Please wait a moment before trying again.';
+                }
+                if (error.status === 401) {
+                    return 'Authentication failed. Please contact the website administrator.';
+                }
+                if (error.status >= 500) {
+                    return 'Service temporarily unavailable. Please try again in a few moments.';
+                }
+                return 'Request failed. Please try again or contact support if the problem persists.';
+            }
+        }
+        
+        // Initialize error manager
+        const errorManager = new MockErrorManager();
+        
+        // Demo functions
+        function simulateNetworkTimeout() {
+            const error = new Error('Request timeout');
+            const errorDetails = errorManager.handleNetworkError(error);
+            updateStatus('network-status', `Network timeout error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateNetworkError() {
+            const error = new Error('Network connection failed');
+            const errorDetails = errorManager.handleNetworkError(error);
+            updateStatus('network-status', `Network error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateRateLimit() {
+            const error = { message: 'Rate limit exceeded', status: 429 };
+            const errorDetails = errorManager.handleAPIError(error);
+            updateStatus('network-status', `Rate limit error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateServerError() {
+            const error = { message: 'Internal server error', status: 500 };
+            const errorDetails = errorManager.handleAPIError(error);
+            updateStatus('network-status', `Server error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateInvalidFormat() {
+            const error = new Error('Invalid image format');
+            const errorDetails = errorManager.handleImageError(error);
+            updateStatus('image-status', `Image format error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateImageTooLarge() {
+            const error = new Error('Image size too large');
+            const errorDetails = errorManager.handleImageError(error);
+            updateStatus('image-status', `Image size error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateProcessingFailed() {
+            const error = new Error('Image processing failed');
+            const errorDetails = errorManager.handleImageError(error);
+            updateStatus('image-status', `Processing error handled: ${errorDetails.userMessage} (Retryable: ${errorDetails.retryable})`, 'error');
+        }
+        
+        function simulateCorruptedImage() {
+            const error = new Error('Corrupted image data');
+            const errorDetails = errorManager.handleImageError(error);
+            updateStatus('image-status', `Corrupted image error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateInvalidApiKey() {
+            const error = new Error('Invalid API key provided');
+            const errorDetails = errorManager.handleConfigError(error);
+            updateStatus('config-status', `API key error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateMissingConfig() {
+            const error = new Error('Missing required configuration');
+            const errorDetails = errorManager.handleConfigError(error);
+            updateStatus('config-status', `Missing config error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateInvalidEndpoint() {
+            const error = new Error('Invalid endpoint URL');
+            const errorDetails = errorManager.handleConfigError(error);
+            updateStatus('config-status', `Endpoint error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulatePermissionDenied() {
+            const error = new Error('Permission denied');
+            const errorDetails = errorManager.handleDOMError(error);
+            updateStatus('dom-status', `Permission error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateElementNotFound() {
+            const error = new Error('Element not found');
+            const errorDetails = errorManager.handleDOMError(error);
+            updateStatus('dom-status', `Element error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function simulateShadowDOMError() {
+            const error = new Error('Shadow DOM not supported');
+            const errorDetails = errorManager.handleDOMError(error);
+            updateStatus('dom-status', `Shadow DOM error handled: ${errorDetails.userMessage}`, 'error');
+        }
+        
+        function testRetryLogic() {
+            const error = new Error('Image processing failed');
+            const errorDetails = errorManager.handleImageError(error);
+            
+            let retryCount = 0;
+            const maxRetries = 3;
+            
+            function attemptRetry() {
+                if (errorManager.shouldRetry(errorDetails) && retryCount < maxRetries) {
+                    errorManager.recordRetryAttempt(errorDetails);
+                    retryCount++;
+                    const delay = errorManager.calculateRetryDelay(errorDetails);
+                    
+                    updateStatus('retry-status', `Retry attempt ${retryCount}/${maxRetries}. Next retry in ${delay}ms`, 'error');
+                    
+                    setTimeout(() => {
+                        if (retryCount < maxRetries) {
+                            attemptRetry();
+                        } else {
+                            updateStatus('retry-status', `All retry attempts exhausted (${retryCount}/${maxRetries})`, 'error');
+                        }
+                    }, Math.min(delay, 2000)); // Cap delay for demo
+                } else {
+                    updateStatus('retry-status', `Retry not allowed. Retryable: ${errorDetails.retryable}, Attempts: ${retryCount}/${maxRetries}`, 'error');
+                }
+            }
+            
+            attemptRetry();
+        }
+        
+        function clearRetryAttempts() {
+            const error = new Error('Image processing failed');
+            const errorDetails = errorManager.handleImageError(error);
+            errorManager.clearRetryAttempts(errorDetails);
+            updateStatus('retry-status', 'Retry attempts cleared successfully', 'success');
+        }
+        
+        function selectImage(element) {
+            element.style.border = '3px solid #667eea';
+            updateStatus('image-selection-status', 'Room image selected for editing', 'success');
+            
+            setTimeout(() => {
+                element.style.border = '';
+            }, 2000);
+        }
+        
+        function updateStatus(elementId, message, type) {
+            const statusElement = document.getElementById(elementId);
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+            statusElement.style.display = 'block';
+        }
+        
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

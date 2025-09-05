@@ -1,0 +1,24 @@
+{
+  "version": "0.1.0",
+  "files": [
+    {
+      "source": "dino-overlay-0.1.0.js",
+      "integrity": "sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu",
+      "size": 110104,
+      "contentType": "application/javascript",
+      "cacheControl": "public, max-age=31536000, immutable"
+    },
+    {
+      "source": "dino-overlay-loader.min-0.1.0.js",
+      "integrity": "sha384-070IklUck0YB2zvNbvQGH4Hdgx9mxcylnaoMqBpt7eZOYyRIiFK50Ddn2TD/6K4t",
+      "size": 4783,
+      "contentType": "application/javascript",
+      "cacheControl": "public, max-age=31536000, immutable"
+    }
+  ],
+  "cdn": {
+    "primary": "https://cdn.dinooverlay.com/v1",
+    "fallback": "https://backup-cdn.dinooverlay.com/v1",
+    "local": "./dist"
+  }
+}

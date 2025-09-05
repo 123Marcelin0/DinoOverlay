@@ -1,0 +1,98 @@
+<!-- Shopify Integration Example -->
+<!-- Add this to your theme.liquid file before closing </head> tag -->
+
+{% comment %}
+  DinoOverlay integration for Shopify real estate themes
+  Requires API key to be set in theme settings
+{% endcomment %}
+
+{% if settings.dino_overlay_api_key != blank %}
+<script>
+  window.DinoOverlayConfig = {
+    apiKey: '{{ settings.dino_overlay_api_key | escape }}',
+    apiEndpoint: 'https://api.dinooverlay.com',
+    theme: '{{ settings.dino_overlay_theme | default: "auto" }}',
+    enableAnalytics: {{ settings.dino_overlay_analytics | default: true }},
+    debug: {{ settings.dino_overlay_debug | default: false }},
+    customActions: [
+      {% if settings.dino_overlay_custom_actions != blank %}
+        {% assign custom_actions = settings.dino_overlay_custom_actions | split: ',' %}
+        {% for action in custom_actions %}
+          {% assign action_parts = action | split: ':' %}
+          {
+            id: '{{ action_parts[0] | strip | escape }}',
+            label: '{{ action_parts[1] | strip | escape }}',
+            prompt: '{{ action_parts[2] | strip | escape }}'
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      {% endif %}
+    ]
+  };
+</script>
+
+<script 
+  src="https://cdn.dinooverlay.com/v1/dino-overlay-loader-0.1.0.min.js"
+  integrity="sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu"
+  crossorigin="anonymous"
+  async>
+</script>
+
+{% comment %}
+  Add this CSS to ensure proper image styling
+{% endcomment %}
+<style>
+  .property-image.editable-room {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .property-image.editable-room:hover {
+    transform: scale(1.02);
+  }
+</style>
+{% endif %}
+
+{% comment %}
+  Theme Settings Schema (add to settings_schema.json):
+  
+  {
+    "name": "DinoOverlay Settings",
+    "settings": [
+      {
+        "type": "text",
+        "id": "dino_overlay_api_key",
+        "label": "DinoOverlay API Key",
+        "info": "Get your API key from DinoOverlay dashboard"
+      },
+      {
+        "type": "select",
+        "id": "dino_overlay_theme",
+        "label": "Theme Mode",
+        "options": [
+          { "value": "auto", "label": "Auto" },
+          { "value": "light", "label": "Light" },
+          { "value": "dark", "label": "Dark" }
+        ],
+        "default": "auto"
+      },
+      {
+        "type": "checkbox",
+        "id": "dino_overlay_analytics",
+        "label": "Enable Analytics",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "dino_overlay_debug",
+        "label": "Debug Mode",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "dino_overlay_custom_actions",
+        "label": "Custom Actions",
+        "info": "Format: id:label:prompt, one per line"
+      }
+    ]
+  }
+{% endcomment %}

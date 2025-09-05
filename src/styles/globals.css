@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Glassmorphic component classes */
+@layer components {
+  .glass-panel {
+    @apply bg-glass-white backdrop-blur-md border border-glass-light rounded-lg shadow-glass;
+  }
+  
+  .glass-panel-dark {
+    @apply bg-glass-black backdrop-blur-md border border-glass-dark rounded-lg shadow-glass;
+  }
+  
+  .glass-button {
+    @apply glass-panel px-4 py-2 hover:bg-glass-light transition-all duration-200 hover:shadow-glow;
+  }
+  
+  .glass-input {
+    @apply glass-panel px-3 py-2 bg-transparent placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50;
+  }
+  
+  .glow-border {
+    @apply border-2 border-blue-400/50 shadow-glow animate-glow;
+  }
+
+  /* Mobile-optimized glassmorphic styles */
+  .glass-panel-mobile {
+    @apply bg-glass-white/80 backdrop-blur-sm border border-glass-light/60 rounded-xl shadow-glass-lg;
+  }
+  
+  .glass-button-mobile {
+    @apply glass-panel-mobile px-5 py-4 min-h-[44px] hover:bg-glass-light/80 transition-all duration-200 hover:shadow-glow active:scale-95;
+  }
+  
+  .glass-input-mobile {
+    @apply glass-panel-mobile px-4 py-3 min-h-[44px] text-base bg-transparent placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50;
+  }
+
+  /* Touch-friendly interactive states */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  .touch-button {
+    @apply touch-target select-none touch-manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}

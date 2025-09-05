@@ -1,0 +1,114 @@
+<!-- Squarespace Integration Example -->
+<!-- Add this code to Settings > Advanced > Code Injection > Header -->
+
+<script>
+  // Squarespace DinoOverlay Integration
+  (function() {
+    'use strict';
+    
+    // Configuration - Update these values
+    var DINO_CONFIG = {
+      apiKey: 'your-api-key-here', // Replace with your actual API key
+      apiEndpoint: 'https://api.dinooverlay.com',
+      theme: 'auto',
+      enableAnalytics: true,
+      debug: false,
+      customActions: [
+        { id: 'modern', label: 'Modern Style', prompt: 'Apply modern minimalist styling' },
+        { id: 'luxury', label: 'Luxury Look', prompt: 'Apply luxury high-end styling' },
+        { id: 'cozy', label: 'Cozy Feel', prompt: 'Create warm, cozy atmosphere' }
+      ]
+    };
+    
+    // Wait for Squarespace to load
+    function initDinoOverlay() {
+      // Load DinoOverlay script
+      var script = document.createElement('script');
+      script.src = 'https://cdn.dinooverlay.com/v1/dino-overlay-loader-0.1.0.min.js';
+      script.integrity = 'sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu';
+      script.crossOrigin = 'anonymous';
+      script.async = true;
+      
+      script.onload = function() {
+        if (window.DinoOverlayLoader) {
+          window.DinoOverlayLoader.init(DINO_CONFIG);
+          console.log('DinoOverlay initialized for Squarespace');
+        }
+      };
+      
+      script.onerror = function() {
+        console.error('Failed to load DinoOverlay script');
+      };
+      
+      document.head.appendChild(script);
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDinoOverlay);
+    } else {
+      initDinoOverlay();
+    }
+    
+    // Handle Squarespace AJAX navigation
+    if (window.Static && window.Static.SQUARESPACE_CONTEXT) {
+      window.addEventListener('mercury:load', initDinoOverlay);
+    }
+  })();
+</script>
+
+<!-- Add this CSS to Settings > Design > Custom CSS -->
+<style>
+  /* DinoOverlay Squarespace Styling */
+  .sqs-block-image .editable-room {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  .sqs-block-image .editable-room:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Ensure images are properly sized */
+  .sqs-block-image .editable-room {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Gallery block compatibility */
+  .sqs-gallery .editable-room {
+    object-fit: cover;
+  }
+  
+  /* Summary block compatibility */
+  .summary-item .editable-room {
+    border-radius: 4px;
+  }
+</style>
+
+<!-- 
+Usage Instructions:
+
+1. Add the above script to Settings > Advanced > Code Injection > Header
+2. Add the CSS to Settings > Design > Custom CSS
+3. Replace 'your-api-key-here' with your actual DinoOverlay API key
+4. Add the class 'editable-room' to any images you want to make editable
+
+To add the class to images in Squarespace:
+1. Click on the image block
+2. Go to Design tab
+3. Click Advanced
+4. Add 'editable-room' to the CSS Class field
+
+For gallery images:
+1. Edit the gallery block
+2. Click on individual images
+3. In the image editor, go to Design
+4. Add 'editable-room' to CSS Class
+
+Note: Some Squarespace templates may require additional CSS adjustments
+for optimal DinoOverlay integration.
+-->

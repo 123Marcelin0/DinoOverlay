@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay CDN Demo</title>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.dinooverlay.com https://backup-cdn.dinooverlay.com 'unsafe-inline'; connect-src 'self' https://api.dinooverlay.com; img-src 'self' data: https://api.dinooverlay.com;">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .property-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        
+        .property-image.editable-room {
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .property-image.editable-room::after {
+            content: '✨ Click to Edit';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .property-image.editable-room:hover::after {
+            opacity: 1;
+        }
+        
+        .property-info {
+            padding: 20px;
+        }
+        
+        .property-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .property-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .property-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .room-type {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .edit-status {
+            font-size: 0.8rem;
+            color: #4caf50;
+            font-weight: 500;
+        }
+        
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .status-bar.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .status-bar.success {
+            background: #4caf50;
+        }
+        
+        .status-bar.error {
+            background: #f44336;
+        }
+        
+        .integration-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .integration-info h3 {
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .feature h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .feature p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-bar {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦕 DinoOverlay CDN Demo</h1>
+            <p>Experience AI-powered real estate image editing in action</p>
+        </div>
+        
+        <div class="demo-section">
+            <div class="integration-info">
+                <h3>🚀 CDN Integration Active</h3>
+                <p>This demo showcases the DinoOverlay CDN integration with fallback support and security features.</p>
+                <div class="code-snippet">
+&lt;script src="https://cdn.dinooverlay.com/v1/dino-overlay-loader-0.1.0.min.js"
+        integrity="sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu"
+        crossorigin="anonymous" async&gt;&lt;/script&gt;
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Fast Loading</h4>
+                    <p>108KB bundle with global CDN delivery</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h4>Secure</h4>
+                    <p>SRI hashes and CSP compliance</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔄</div>
+                    <h4>Reliable</h4>
+                    <p>Automatic fallback to backup CDN</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <h4>Responsive</h4>
+                    <p>Works on all devices and browsers</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Interactive Property Gallery</h2>
+            <p>Click on any room image below to experience DinoOverlay's AI-powered editing capabilities.</p>
+            
+            <div class="property-grid">
+                <div class="property-card">
+                    <img 
+                        src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=200&fit=crop" 
+                        alt="Modern Living Room" 
+                        class="property-image editable-room"
+                        data-room-type="living-room"
+                        data-property-id="demo-001"
+                    />
+                    <div class="property-info">
+                        <h3 class="property-title">Luxury Living Room</h3>
+                        <p class="property-description">Spacious living area with contemporary furniture, floor-to-ceiling windows, and premium finishes.</p>
+                        <div class="property-meta">
+                            <span class="room-type">Living Room</span>
+                            <span class="edit-status">✨ AI Editable</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="property-card">
+                    <img 
+                        src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=200&fit=crop" 
+                        alt="Modern Kitchen" 
+                        class="property-image editable-room"
+                        data-room-type="kitchen"
+                        data-property-id="demo-002"
+                    />
+                    <div class="property-info">
+                        <h3 class="property-title">Chef's Kitchen</h3>
+                        <p class="property-description">State-of-the-art kitchen with premium appliances, marble countertops, and custom cabinetry.</p>
+                        <div class="property-meta">
+                            <span class="room-type">Kitchen</span>
+                            <span class="edit-status">✨ AI Editable</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="property-card">
+                    <img 
+                        src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=200&fit=crop" 
+                        alt="Master Bedroom" 
+                        class="property-image editable-room"
+                        data-room-type="bedroom"
+                        data-property-id="demo-003"
+                    />
+                    <div class="property-info">
+                        <h3 class="property-title">Master Suite</h3>
+                        <p class="property-description">Elegant master bedroom with walk-in closet, en-suite bathroom, and private balcony access.</p>
+                        <div class="property-meta">
+                            <span class="room-type">Bedroom</span>
+                            <span class="edit-status">✨ AI Editable</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="property-card">
+                    <img 
+                        src="https://images.unsplash.com/photo-1574180045827-681f8a1a9622?w=400&h=200&fit=crop" 
+                        alt="Dining Room" 
+                        class="property-image editable-room"
+                        data-room-type="dining"
+                        data-property-id="demo-004"
+                    />
+                    <div class="property-info">
+                        <h3 class="property-title">Formal Dining</h3>
+                        <p class="property-description">Sophisticated dining room perfect for entertaining, with crystal chandelier and hardwood floors.</p>
+                        <div class="property-meta">
+                            <span class="room-type">Dining Room</span>
+                            <span class="edit-status">✨ AI Editable</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="property-card">
+                    <img 
+                        src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=400&h=200&fit=crop" 
+                        alt="Home Office" 
+                        class="property-image editable-room"
+                        data-room-type="office"
+                        data-property-id="demo-005"
+                    />
+                    <div class="property-info">
+                        <h3 class="property-title">Home Office</h3>
+                        <p class="property-description">Productive workspace with built-in shelving, natural light, and modern ergonomic design.</p>
+                        <div class="property-meta">
+                            <span class="room-type">Office</span>
+                            <span class="edit-status">✨ AI Editable</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="property-card">
+                    <img 
+                        src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=200&fit=crop" 
+                        alt="Bathroom" 
+                        class="property-image editable-room"
+                        data-room-type="bathroom"
+                        data-property-id="demo-006"
+                    />
+                    <div class="property-info">
+                        <h3 class="property-title">Spa Bathroom</h3>
+                        <p class="property-description">Luxurious bathroom with soaking tub, rainfall shower, and premium marble finishes.</p>
+                        <div class="property-meta">
+                            <span class="room-type">Bathroom</span>
+                            <span class="edit-status">✨ AI Editable</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="status-bar" class="status-bar">
+        <span id="status-message">Initializing DinoOverlay...</span>
+    </div>
+    
+    <!-- DinoOverlay CDN Integration -->
+    <script>
+        // Status display helper
+        function showStatus(message, type = 'info', duration = 5000) {
+            const statusBar = document.getElementById('status-bar');
+            const statusMessage = document.getElementById('status-message');
+            
+            statusMessage.textContent = message;
+            statusBar.className = `status-bar show ${type}`;
+            
+            setTimeout(() => {
+                statusBar.className = 'status-bar';
+            }, duration);
+        }
+        
+        // DinoOverlay Configuration
+        window.DinoOverlayConfig = {
+            apiKey: 'demo-api-key-12345',
+            apiEndpoint: 'https://api.dinooverlay.com',
+            theme: 'auto',
+            enableAnalytics: false, // Disabled for demo
+            debug: true,
+            customActions: [
+                { id: 'modern', label: 'Modern Style', prompt: 'Apply modern minimalist styling with clean lines and neutral colors' },
+                { id: 'luxury', label: 'Luxury Look', prompt: 'Transform into a luxury high-end space with premium finishes' },
+                { id: 'cozy', label: 'Cozy Atmosphere', prompt: 'Create a warm, cozy atmosphere with soft textures and warm lighting' },
+                { id: 'minimalist', label: 'Minimalist', prompt: 'Apply minimalist design principles with clean, uncluttered aesthetics' },
+                { id: 'industrial', label: 'Industrial', prompt: 'Add industrial elements like exposed brick, metal fixtures, and raw materials' }
+            ]
+        };
+        
+        // Load DinoOverlay from CDN with fallback
+        (function() {
+            showStatus('Loading DinoOverlay from CDN...', 'info');
+            
+            const script = document.createElement('script');
+            script.src = 'dino-overlay-loader.min-0.1.0.js'; // Using local file for demo
+            script.async = true;
+            
+            script.onload = function() {
+                try {
+                    if (window.DinoOverlayLoader) {
+                        window.DinoOverlayLoader.init(window.DinoOverlayConfig);
+                        showStatus('✅ DinoOverlay loaded successfully! Click any room image to start editing.', 'success', 7000);
+                        
+                        // Add demo interaction tracking
+                        setTimeout(() => {
+                            const editableImages = document.querySelectorAll('.editable-room');
+                            console.log(`DinoOverlay Demo: Found ${editableImages.length} editable images`);
+                            
+                            editableImages.forEach((img, index) => {
+                                img.addEventListener('click', function() {
+                                    showStatus(`🎨 Opening AI editor for ${img.alt}...`, 'info', 3000);
+                                    console.log('Demo: Image clicked', {
+                                        alt: img.alt,
+                                        roomType: img.dataset.roomType,
+                                        propertyId: img.dataset.propertyId
+                                    });
+                                });
+                            });
+                        }, 1000);
+                    } else {
+                        throw new Error('DinoOverlayLoader not found');
+                    }
+                } catch (error) {
+                    console.error('DinoOverlay initialization failed:', error);
+                    showStatus('❌ DinoOverlay initialization failed: ' + error.message, 'error', 10000);
+                }
+            };
+            
+            script.onerror = function() {
+                console.error('DinoOverlay script failed to load');
+                showStatus('❌ Failed to load DinoOverlay script. Check console for details.', 'error', 10000);
+            };
+            
+            document.head.appendChild(script);
+        })();
+        
+        // Demo page interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DinoOverlay CDN Demo loaded');
+            
+            // Add hover effects for better UX
+            const propertyCards = document.querySelectorAll('.property-card');
+            propertyCards.forEach(card => {
+                const image = card.querySelector('.property-image');
+                
+                card.addEventListener('mouseenter', function() {
+                    if (image.classList.contains('editable-room')) {
+                        image.style.transform = 'scale(1.05)';
+                    }
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    image.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

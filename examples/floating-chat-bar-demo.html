@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloatingChatBar Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Glassmorphic utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .glass-input {
+            background: transparent;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .glass-input:focus {
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .editable-room {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .editable-room:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold text-white mb-8 text-center">FloatingChatBar Demo</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="glass-panel p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Living Room</h2>
+                <img 
+                    src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop" 
+                    alt="Living Room" 
+                    class="editable-room w-full h-48 object-cover rounded-lg"
+                    id="room1"
+                >
+                <p class="text-white/80 mt-2 text-sm">Click to edit this room</p>
+            </div>
+            
+            <div class="glass-panel p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Bedroom</h2>
+                <img 
+                    src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=300&fit=crop" 
+                    alt="Bedroom" 
+                    class="editable-room w-full h-48 object-cover rounded-lg"
+                    id="room2"
+                >
+                <p class="text-white/80 mt-2 text-sm">Click to edit this room</p>
+            </div>
+        </div>
+        
+        <div class="glass-panel p-6">
+            <h3 class="text-lg font-semibold text-white mb-4">Demo Controls</h3>
+            <div class="flex gap-4 flex-wrap">
+                <button id="showChatBar" class="glass-panel px-4 py-2 text-white hover:bg-white/10 transition-all">
+                    Show Chat Bar
+                </button>
+                <button id="hideChatBar" class="glass-panel px-4 py-2 text-white hover:bg-white/10 transition-all">
+                    Hide Chat Bar
+                </button>
+                <button id="simulateProcessing" class="glass-panel px-4 py-2 text-white hover:bg-white/10 transition-all">
+                    Simulate Processing
+                </button>
+                <button id="clearSelection" class="glass-panel px-4 py-2 text-white hover:bg-white/10 transition-all">
+                    Clear Selection
+                </button>
+            </div>
+        </div>
+        
+        <div class="glass-panel p-6 mt-6">
+            <h3 class="text-lg font-semibold text-white mb-4">Instructions</h3>
+            <ul class="text-white/80 space-y-2">
+                <li>• Click on any room image to select it and show the chat bar</li>
+                <li>• Type a message in the chat bar and press Enter to submit</li>
+                <li>• Press Escape to close the chat bar</li>
+                <li>• The chat bar appears in the bottom-right corner with glassmorphic styling</li>
+                <li>• Processing state shows animated typing indicators</li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+        // Mock FloatingChatBar implementation for demo
+        class FloatingChatBar {
+            constructor(props) {
+                this.props = props;
+                this.element = null;
+                this.inputElement = null;
+                this.sendButton = null;
+                this.typingIndicator = null;
+                this.isVisible = false;
+            }
+
+            render() {
+                if (this.element) return this.element;
+
+                this.element = document.createElement('div');
+                this.element.className = 'fixed z-50 transition-all duration-300 ease-out pointer-events-auto';
+                this.element.style.cssText = 'bottom: 20px; right: 20px; opacity: 0; pointer-events: none;';
+
+                const chatBar = document.createElement('div');
+                chatBar.className = 'glass-panel flex items-center gap-2 p-3 min-w-80 max-w-md';
+
+                const inputContainer = document.createElement('div');
+                inputContainer.className = 'flex-1 relative';
+
+                this.inputElement = document.createElement('input');
+                this.inputElement.type = 'text';
+                this.inputElement.className = 'glass-input w-full pr-10 text-sm text-white placeholder-white/60 px-3 py-2';
+                this.inputElement.placeholder = 'Describe your room edit...';
+                this.inputElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.handleSubmit(e.target.value);
+                    } else if (e.key === 'Escape') {
+                        this.props.onClose();
+                    }
+                });
+                this.inputElement.addEventListener('input', () => this.updateSendButtonState());
+
+                this.sendButton = document.createElement('button');
+                this.sendButton.className = 'absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 hover:text-white hover:bg-white/10';
+                this.sendButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
+                    </svg>
+                `;
+                this.sendButton.addEventListener('click', () => {
+                    if (this.inputElement.value.trim()) {
+                        this.handleSubmit(this.inputElement.value);
+                    }
+                });
+                this.sendButton.disabled = true;
+
+                this.typingIndicator = document.createElement('div');
+                this.typingIndicator.className = 'hidden items-center gap-1 text-xs text-white/60 ml-2';
+                this.typingIndicator.innerHTML = `
+                    <div class="flex gap-1">
+                        <div class="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                        <div class="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                        <div class="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                    </div>
+                    <span>Processing...</span>
+                `;
+
+                inputContainer.appendChild(this.inputElement);
+                inputContainer.appendChild(this.sendButton);
+                chatBar.appendChild(inputContainer);
+                chatBar.appendChild(this.typingIndicator);
+                this.element.appendChild(chatBar);
+
+                document.body.appendChild(this.element);
+                return this.element;
+            }
+
+            updateProps(newProps) {
+                this.props = { ...this.props, ...newProps };
+                this.updateVisibility();
+                this.updateProcessingState();
+            }
+
+            updateVisibility() {
+                if (!this.element) return;
+                
+                const shouldBeVisible = this.props.visible && this.props.selectedImage !== null;
+                
+                if (shouldBeVisible !== this.isVisible) {
+                    this.isVisible = shouldBeVisible;
+                    this.element.style.opacity = this.isVisible ? '1' : '0';
+                    this.element.style.pointerEvents = this.isVisible ? 'auto' : 'none';
+                    
+                    if (this.isVisible) {
+                        setTimeout(() => this.inputElement?.focus(), 100);
+                    }
+                }
+            }
+
+            updateProcessingState() {
+                if (!this.inputElement || !this.sendButton || !this.typingIndicator) return;
+
+                const isProcessing = this.props.isProcessing || false;
+                
+                this.inputElement.disabled = isProcessing;
+                this.sendButton.disabled = isProcessing || this.inputElement.value.trim() === '';
+                
+                if (isProcessing) {
+                    this.typingIndicator.classList.remove('hidden');
+                    this.typingIndicator.classList.add('flex');
+                } else {
+                    this.typingIndicator.classList.remove('flex');
+                    this.typingIndicator.classList.add('hidden');
+                }
+                
+                this.inputElement.style.opacity = isProcessing ? '0.6' : '1';
+            }
+
+            updateSendButtonState() {
+                if (!this.sendButton || !this.inputElement) return;
+                
+                const hasText = this.inputElement.value.trim().length > 0;
+                const isProcessing = this.props.isProcessing || false;
+                
+                this.sendButton.disabled = !hasText || isProcessing;
+            }
+
+            handleSubmit(message) {
+                if (!message.trim() || this.props.isProcessing) return;
+                
+                if (!this.props.selectedImage) {
+                    alert('Please select an image first!');
+                    return;
+                }
+                
+                this.props.onSubmit(message.trim());
+                this.inputElement.value = '';
+                this.updateSendButtonState();
+            }
+
+            destroy() {
+                if (this.element) {
+                    this.element.remove();
+                    this.element = null;
+                }
+            }
+        }
+
+        // Demo state
+        let selectedImage = null;
+        let isProcessing = false;
+
+        // Create chat bar
+        const chatBar = new FloatingChatBar({
+            visible: false,
+            selectedImage: null,
+            onSubmit: (message) => {
+                console.log('Chat message submitted:', message);
+                alert(`Message sent: "${message}"\n\nIn a real implementation, this would be sent to the AI service.`);
+                
+                // Simulate processing
+                chatBar.updateProps({ isProcessing: true });
+                setTimeout(() => {
+                    chatBar.updateProps({ isProcessing: false });
+                }, 2000);
+            },
+            onClose: () => {
+                chatBar.updateProps({ visible: false });
+                selectedImage = null;
+            },
+            isProcessing: false
+        });
+
+        chatBar.render();
+
+        // Add click handlers to room images
+        document.querySelectorAll('.editable-room').forEach(img => {
+            img.addEventListener('click', (e) => {
+                selectedImage = e.target;
+                chatBar.updateProps({ 
+                    visible: true, 
+                    selectedImage: selectedImage 
+                });
+                
+                // Add visual feedback
+                document.querySelectorAll('.editable-room').forEach(i => i.style.border = '');
+                e.target.style.border = '3px solid rgba(59, 130, 246, 0.8)';
+            });
+        });
+
+        // Demo controls
+        document.getElementById('showChatBar').addEventListener('click', () => {
+            if (!selectedImage) {
+                alert('Please select a room image first!');
+                return;
+            }
+            chatBar.updateProps({ visible: true });
+        });
+
+        document.getElementById('hideChatBar').addEventListener('click', () => {
+            chatBar.updateProps({ visible: false });
+        });
+
+        document.getElementById('simulateProcessing').addEventListener('click', () => {
+            if (!selectedImage) {
+                alert('Please select a room image first!');
+                return;
+            }
+            chatBar.updateProps({ visible: true, isProcessing: true });
+            setTimeout(() => {
+                chatBar.updateProps({ isProcessing: false });
+            }, 3000);
+        });
+
+        document.getElementById('clearSelection').addEventListener('click', () => {
+            selectedImage = null;
+            chatBar.updateProps({ visible: false, selectedImage: null });
+            document.querySelectorAll('.editable-room').forEach(i => i.style.border = '');
+        });
+
+        // Click outside to close
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.editable-room') && 
+                !e.target.closest('[class*="glass-panel"]') && 
+                !e.target.closest('button')) {
+                selectedImage = null;
+                chatBar.updateProps({ visible: false, selectedImage: null });
+                document.querySelectorAll('.editable-room').forEach(i => i.style.border = '');
+            }
+        });
+    </script>
+</body>
+</html>

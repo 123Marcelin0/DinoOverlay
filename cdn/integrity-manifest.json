@@ -1,0 +1,35 @@
+{
+  "generated": "2025-09-04T20:11:27.990Z",
+  "files": {
+    "cdn-config.json": {
+      "size": 748,
+      "hashes": {
+        "md5": "a49e31122a4ae17a29cfffd92371857c",
+        "sha256": "sha256-owkBZ9nkldEDlua0b2+QGk8MhtkbdxxvXwEB4lsvhbg=",
+        "sha384": "sha384-pQDnBTnbChB3fgJXCARgfoDNzDwCONpvqK4CGDIXFaaKBieD6PHr1u9loIFBWKjl",
+        "sha512": "sha512-q3iZzrLRXtsxy6F3K3zu/5ks6RBH7h0QGW3TLGjyOpHaVZINttLMiZEhQp9XjR38d2YNHfMmmGiT0VZLkwjWfg=="
+      },
+      "sri": "sha384-pQDnBTnbChB3fgJXCARgfoDNzDwCONpvqK4CGDIXFaaKBieD6PHr1u9loIFBWKjl"
+    },
+    "dino-overlay-0.1.0.js": {
+      "size": 110104,
+      "hashes": {
+        "md5": "f15ddb0999733264a5189f183af0c130",
+        "sha256": "sha256-ke28mSwAwAaKkDap9sTLRJAqcHUxlv8wAHM0cfpwC+g=",
+        "sha384": "sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu",
+        "sha512": "sha512-x9CepJKKELYeXlfFkmR8mcR9ITkKIgGlG28rm1loMSJ2vpHxC7tkv0eCSLzWvwi+J1Q+Hg2t7exp/a+4Hc1iZQ=="
+      },
+      "sri": "sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu"
+    },
+    "dino-overlay-loader.min-0.1.0.js": {
+      "size": 4783,
+      "hashes": {
+        "md5": "3271ca0f574240e36998ce30f9b26761",
+        "sha256": "sha256-J0Qlj70lSeqcxXnb6j6lhemA0liDVev8xgWj8lolGWE=",
+        "sha384": "sha384-070IklUck0YB2zvNbvQGH4Hdgx9mxcylnaoMqBpt7eZOYyRIiFK50Ddn2TD/6K4t",
+        "sha512": "sha512-dPAEyxgWZ+BhbS/0sfFzOMC1s7eFUeR6ARwQmwAsqFHwC5jOcLXm6kUCY2vEEd4B3efMx59fynZWWAiYSnJ/wQ=="
+      },
+      "sri": "sha384-070IklUck0YB2zvNbvQGH4Hdgx9mxcylnaoMqBpt7eZOYyRIiFK50Ddn2TD/6K4t"
+    }
+  }
+}

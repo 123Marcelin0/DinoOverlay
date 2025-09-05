@@ -1,0 +1,152 @@
+<!-- Webflow Integration Example -->
+<!-- Add this code to Project Settings > Custom Code > Head Code -->
+
+<script>
+  // Webflow DinoOverlay Integration
+  window.DinoOverlayConfig = {
+    apiKey: 'your-api-key-here', // Replace with your actual API key
+    apiEndpoint: 'https://api.dinooverlay.com',
+    theme: 'auto',
+    enableAnalytics: true,
+    debug: false,
+    customActions: [
+      { id: 'minimalist', label: 'Minimalist', prompt: 'Apply clean minimalist design' },
+      { id: 'industrial', label: 'Industrial', prompt: 'Apply industrial loft styling' },
+      { id: 'scandinavian', label: 'Scandinavian', prompt: 'Apply Scandinavian design principles' }
+    ]
+  };
+</script>
+
+<!-- Add this to Project Settings > Custom Code > Before </body> tag -->
+<script>
+  // Initialize DinoOverlay after Webflow loads
+  window.Webflow = window.Webflow || [];
+  window.Webflow.push(function() {
+    // Load DinoOverlay script
+    var script = document.createElement('script');
+    script.src = 'https://cdn.dinooverlay.com/v1/dino-overlay-loader-0.1.0.min.js';
+    script.integrity = 'sha384-badg/rnYoXzABqabanZK6jAmk5W5ur6718ZERBWPIcuKMywg6T1WggrO5Fz2BbVu';
+    script.crossOrigin = 'anonymous';
+    script.async = true;
+    
+    script.onload = function() {
+      if (window.DinoOverlayLoader) {
+        window.DinoOverlayLoader.init(window.DinoOverlayConfig);
+        console.log('DinoOverlay initialized for Webflow');
+        
+        // Handle Webflow interactions
+        handleWebflowInteractions();
+      }
+    };
+    
+    script.onerror = function() {
+      console.error('Failed to load DinoOverlay script');
+    };
+    
+    document.head.appendChild(script);
+  });
+  
+  // Handle Webflow-specific interactions
+  function handleWebflowInteractions() {
+    // Re-initialize after Webflow interactions
+    $(document).on('click', '[data-w-tab]', function() {
+      setTimeout(function() {
+        if (window.DinoOverlay && window.DinoOverlay.performanceMonitor) {
+          window.DinoOverlay.performanceMonitor.trackUserEngagement('tabSwitch');
+        }
+      }, 100);
+    });
+    
+    // Handle lightbox interactions
+    $(document).on('click', '.w-lightbox-backdrop', function() {
+      setTimeout(function() {
+        if (window.DinoOverlay && window.DinoOverlay.performanceMonitor) {
+          window.DinoOverlay.performanceMonitor.trackUserEngagement('lightboxClose');
+        }
+      }, 100);
+    });
+  }
+</script>
+
+<!-- 
+CSS Classes to add in Webflow Designer:
+
+1. Select your image element
+2. In the Settings panel, add 'editable-room' to the CSS Class field
+3. Optionally add these additional classes for better styling:
+
+Custom CSS (add to Project Settings > Custom Code > Head Code):
+-->
+
+<style>
+  /* DinoOverlay Webflow Styling */
+  .editable-room {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .editable-room:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Collection list compatibility */
+  .w-dyn-item .editable-room {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Grid compatibility */
+  .w-layout-grid .editable-room {
+    width: 100%;
+    height: auto;
+  }
+  
+  /* Lightbox compatibility */
+  .w-lightbox-item .editable-room {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  /* Responsive adjustments */
+  @media screen and (max-width: 767px) {
+    .editable-room:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+</style>
+
+<!-- 
+Usage Instructions:
+
+1. Add the configuration script to Project Settings > Custom Code > Head Code
+2. Add the initialization script to Project Settings > Custom Code > Before </body> tag
+3. Add the CSS to Project Settings > Custom Code > Head Code
+4. Replace 'your-api-key-here' with your actual DinoOverlay API key
+
+To make images editable:
+1. Select the image element in the Webflow Designer
+2. In the Element Settings panel, find the CSS Class field
+3. Add 'editable-room' as a class name
+4. Publish your site
+
+For Collection List items:
+1. Select the image field in your collection template
+2. Add 'editable-room' to the CSS Class field
+3. The class will be applied to all collection items
+
+For CMS images:
+1. In your CMS collection, you can add a toggle field called 'Editable'
+2. Use conditional visibility to show/hide the 'editable-room' class
+3. This allows content editors to control which images are editable
+
+Advanced: Custom Fields Integration
+You can bind DinoOverlay configuration to CMS fields:
+- Room Type: Use a text field to specify room types
+- Property ID: Use a text field for property identification
+- Custom Actions: Use a multi-reference field for action presets
+-->

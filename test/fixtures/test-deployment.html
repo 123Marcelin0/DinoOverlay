@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay Deployment Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .property-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .property-info {
+            padding: 15px;
+        }
+        
+        .property-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .property-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        .test-controls {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 12px;
+        }
+        
+        .error-message {
+            display: none;
+            position: fixed;
+            top: 50px;
+            right: 10px;
+            padding: 10px;
+            background: #f44336;
+            color: white;
+            border-radius: 4px;
+            max-width: 300px;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DinoOverlay Deployment Test</h1>
+            <p>This page tests the complete DinoOverlay integration for deployment validation.</p>
+        </div>
+        
+        <div class="property-grid">
+            <div class="property-card">
+                <img src="/placeholder.jpg" 
+                     alt="Modern Living Room" 
+                     class="property-image editable-room"
+                     data-room-type="living-room">
+                <div class="property-info">
+                    <div class="property-title">Modern Living Room</div>
+                    <div class="property-description">
+                        Spacious living room with natural light and contemporary furnishing.
+                        Perfect for AI-powered interior design modifications.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="property-card">
+                <img src="/placeholder.jpg" 
+                     alt="Elegant Bedroom" 
+                     class="property-image editable-room"
+                     data-room-type="bedroom">
+                <div class="property-info">
+                    <div class="property-title">Elegant Bedroom</div>
+                    <div class="property-description">
+                        Cozy bedroom with minimalist design elements.
+                        Ready for style transformations and furniture additions.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="property-card">
+                <img src="/placeholder.jpg" 
+                     alt="Gourmet Kitchen" 
+                     class="property-image editable-room"
+                     data-room-type="kitchen">
+                <div class="property-info">
+                    <div class="property-title">Gourmet Kitchen</div>
+                    <div class="property-description">
+                        Modern kitchen with premium appliances and clean lines.
+                        Ideal for testing various styling options.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="property-card">
+                <img src="/placeholder.jpg" 
+                     alt="Luxury Bathroom" 
+                     class="property-image editable-room"
+                     data-room-type="bathroom">
+                <div class="property-info">
+                    <div class="property-title">Luxury Bathroom</div>
+                    <div class="property-description">
+                        Spa-like bathroom with modern fixtures.
+                        Perfect for testing overlay functionality.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Non-editable image for testing -->
+            <div class="property-card">
+                <img src="/placeholder.jpg" 
+                     alt="Exterior View" 
+                     class="property-image non-editable">
+                <div class="property-info">
+                    <div class="property-title">Exterior View</div>
+                    <div class="property-description">
+                        Beautiful exterior view (not editable for testing purposes).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-indicator" id="status-indicator">
+        Loading DinoOverlay...
+    </div>
+    
+    <div class="test-controls" id="test-controls">
+        <div><strong>Test Controls:</strong></div>
+        <div>Images detected: <span id="image-count">0</span></div>
+        <div>Overlay status: <span id="overlay-status">Initializing</span></div>
+        <div>API status: <span id="api-status">Unknown</span></div>
+    </div>
+    
+    <div class="error-message" id="error-message" data-testid="cdn-error-message">
+        Failed to load DinoOverlay. Please check your connection and try again.
+    </div>
+
+    <!-- DinoOverlay Integration -->
+    <script>
+        // Configuration for deployment testing
+        const DINO_OVERLAY_CONFIG = {
+            apiKey: 'test-api-key-for-deployment-validation',
+            apiEndpoint: 'https://api.dinooverlay.com',
+            theme: 'auto',
+            enableAnalytics: false, // Disabled for testing
+            debug: true,
+            logLevel: 'info'
+        };
+        
+        // Test utilities
+        window.testUtils = {
+            updateStatus: function(status) {
+                const indicator = document.getElementById('status-indicator');
+                if (indicator) {
+                    indicator.textContent = status;
+                    indicator.style.background = status.includes('Error') ? '#f44336' : '#4CAF50';
+                }
+            },
+            
+            updateImageCount: function(count) {
+                const element = document.getElementById('image-count');
+                if (element) element.textContent = count;
+            },
+            
+            updateOverlayStatus: function(status) {
+                const element = document.getElementById('overlay-status');
+                if (element) element.textContent = status;
+            },
+            
+            updateApiStatus: function(status) {
+                const element = document.getElementById('api-status');
+                if (element) element.textContent = status;
+            },
+            
+            showError: function(message) {
+                const errorElement = document.getElementById('error-message');
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+        };
+        
+        // Initialize DinoOverlay
+        function initializeDinoOverlay() {
+            window.testUtils.updateStatus('Initializing DinoOverlay...');
+            
+            try {
+                if (typeof DinoOverlayLoader !== 'undefined') {
+                    DinoOverlayLoader.init(DINO_OVERLAY_CONFIG);
+                    
+                    // Set up event listeners
+                    if (window.DinoOverlay) {
+                        window.DinoOverlay.on('initialized', function() {
+                            window.testUtils.updateStatus('DinoOverlay Ready');
+                            window.testUtils.updateOverlayStatus('Initialized');
+                            
+                            const imageCount = document.querySelectorAll('.editable-room').length;
+                            window.testUtils.updateImageCount(imageCount);
+                        });
+                        
+                        window.DinoOverlay.on('error', function(error) {
+                            window.testUtils.updateStatus('Error: ' + error.message);
+                            window.testUtils.showError(error.message);
+                        });
+                        
+                        window.DinoOverlay.on('apiConnected', function() {
+                            window.testUtils.updateApiStatus('Connected');
+                        });
+                        
+                        window.DinoOverlay.on('apiError', function(error) {
+                            window.testUtils.updateApiStatus('Error: ' + error.message);
+                        });
+                    }
+                } else {
+                    throw new Error('DinoOverlayLoader not found');
+                }
+            } catch (error) {
+                window.testUtils.updateStatus('Error: ' + error.message);
+                window.testUtils.showError('Failed to initialize DinoOverlay: ' + error.message);
+            }
+        }
+        
+        // Load DinoOverlay script
+        function loadDinoOverlay() {
+            const script = document.createElement('script');
+            script.src = '/dist/dino-overlay-loader.min-0.1.0.js';
+            script.async = true;
+            
+            script.onload = function() {
+                window.testUtils.updateStatus('Script loaded, initializing...');
+                setTimeout(initializeDinoOverlay, 100);
+            };
+            
+            script.onerror = function() {
+                window.testUtils.updateStatus('Error: Failed to load script');
+                window.testUtils.showError('Failed to load DinoOverlay script from CDN');
+                
+                // Try fallback
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = '/cdn/dino-overlay-loader.min-0.1.0.js';
+                fallbackScript.async = true;
+                
+                fallbackScript.onload = function() {
+                    window.testUtils.updateStatus('Fallback script loaded');
+                    setTimeout(initializeDinoOverlay, 100);
+                };
+                
+                fallbackScript.onerror = function() {
+                    window.testUtils.updateStatus('Error: All scripts failed to load');
+                    window.testUtils.showError('Failed to load DinoOverlay from both primary and fallback sources');
+                };
+                
+                document.head.appendChild(fallbackScript);
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadDinoOverlay);
+        } else {
+            loadDinoOverlay();
+        }
+        
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            if (event.filename && event.filename.includes('dino-overlay')) {
+                window.testUtils.updateStatus('Error: ' + event.message);
+                window.testUtils.showError('DinoOverlay Error: ' + event.message);
+            }
+        });
+        
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', function(event) {
+            if (event.reason && event.reason.toString().includes('DinoOverlay')) {
+                window.testUtils.updateStatus('Error: ' + event.reason);
+                window.testUtils.showError('DinoOverlay Promise Error: ' + event.reason);
+            }
+        });
+    </script>
+</body>
+</html>

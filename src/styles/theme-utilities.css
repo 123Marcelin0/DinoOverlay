@@ -1,0 +1,224 @@
+/* Theme-aware glassmorphic utilities */
+.dino-glass {
+  background: var(--dino-glass-bg);
+  backdrop-filter: var(--dino-glass-backdrop);
+  -webkit-backdrop-filter: var(--dino-glass-backdrop);
+  border: 1px solid var(--dino-glass-border);
+  box-shadow: 0 8px 32px var(--dino-glass-shadow);
+}
+
+.dino-glass-text {
+  color: var(--dino-glass-text);
+}
+
+.dino-glass-text-secondary {
+  color: var(--dino-glass-text-secondary);
+}
+
+.dino-glass-accent {
+  background: var(--dino-glass-accent);
+  color: var(--dino-glass-text);
+}
+
+.dino-glass-accent:hover {
+  background: var(--dino-glass-accent-hover);
+}
+
+.dino-glass-success {
+  background: var(--dino-glass-success);
+  color: var(--dino-glass-text);
+}
+
+.dino-glass-warning {
+  background: var(--dino-glass-warning);
+  color: var(--dino-glass-text);
+}
+
+.dino-glass-error {
+  background: var(--dino-glass-error);
+  color: var(--dino-glass-text);
+}
+
+/* Animation utilities */
+.dino-transition-fast {
+  transition-duration: var(--dino-duration-fast);
+  transition-timing-function: var(--dino-easing-ease);
+}
+
+.dino-transition-normal {
+  transition-duration: var(--dino-duration-normal);
+  transition-timing-function: var(--dino-easing-ease);
+}
+
+.dino-transition-slow {
+  transition-duration: var(--dino-duration-slow);
+  transition-timing-function: var(--dino-easing-ease);
+}
+
+/* Component-specific theme styles */
+.dino-sidebar {
+  background: var(--dino-glass-bg);
+  backdrop-filter: var(--dino-glass-backdrop);
+  -webkit-backdrop-filter: var(--dino-glass-backdrop);
+  border-left: 1px solid var(--dino-glass-border);
+  box-shadow: -4px 0 32px var(--dino-glass-shadow);
+}
+
+.dino-chat-bar {
+  background: var(--dino-glass-bg);
+  backdrop-filter: var(--dino-glass-backdrop);
+  -webkit-backdrop-filter: var(--dino-glass-backdrop);
+  border: 1px solid var(--dino-glass-border);
+  box-shadow: 0 -4px 32px var(--dino-glass-shadow);
+}
+
+.dino-highlighter {
+  border: 2px solid var(--dino-glass-accent);
+  box-shadow: 
+    0 0 20px var(--dino-glass-accent),
+    inset 0 0 20px var(--dino-glass-bg);
+}
+
+.dino-button {
+  background: var(--dino-glass-bg);
+  backdrop-filter: var(--dino-glass-backdrop);
+  -webkit-backdrop-filter: var(--dino-glass-backdrop);
+  border: 1px solid var(--dino-glass-border);
+  color: var(--dino-glass-text);
+  transition: all var(--dino-duration-fast) var(--dino-easing-ease);
+}
+
+.dino-button:hover {
+  background: var(--dino-glass-accent);
+  border-color: var(--dino-glass-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--dino-glass-shadow);
+}
+
+.dino-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px var(--dino-glass-shadow);
+}
+
+.dino-input {
+  background: var(--dino-glass-bg);
+  backdrop-filter: var(--dino-glass-backdrop);
+  -webkit-backdrop-filter: var(--dino-glass-backdrop);
+  border: 1px solid var(--dino-glass-border);
+  color: var(--dino-glass-text);
+  transition: all var(--dino-duration-fast) var(--dino-easing-ease);
+}
+
+.dino-input:focus {
+  border-color: var(--dino-glass-accent);
+  box-shadow: 0 0 0 2px var(--dino-glass-accent);
+  outline: none;
+}
+
+.dino-input::placeholder {
+  color: var(--dino-glass-text-secondary);
+}
+
+/* Loading states */
+.dino-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.dino-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--dino-glass-accent),
+    transparent
+  );
+  animation: dino-shimmer 1.5s infinite;
+}
+
+@keyframes dino-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Glow animation for highlighter */
+@keyframes dino-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px var(--dino-glass-accent),
+      inset 0 0 20px var(--dino-glass-bg);
+  }
+  50% {
+    box-shadow: 
+      0 0 40px var(--dino-glass-accent),
+      0 0 60px var(--dino-glass-accent),
+      inset 0 0 20px var(--dino-glass-bg);
+  }
+}
+
+.dino-glow-animation {
+  animation: dino-glow 2s ease-in-out infinite;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .dino-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 50vh;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-left: none;
+    border-top: 1px solid var(--dino-glass-border);
+    box-shadow: 0 -4px 32px var(--dino-glass-shadow);
+  }
+  
+  .dino-chat-bar {
+    position: relative;
+    margin: 1rem;
+    border-radius: 1rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dino-glass {
+    border-width: 2px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--dino-color-surface);
+  }
+  
+  .dino-button {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--dino-color-surface);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dino-transition-fast,
+  .dino-transition-normal,
+  .dino-transition-slow {
+    transition: none;
+  }
+  
+  .dino-glow-animation {
+    animation: none;
+  }
+  
+  .dino-loading::after {
+    animation: none;
+  }
+}
