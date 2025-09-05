@@ -20,7 +20,7 @@ export interface LoaderError extends Error {
 }
 
 export const DEFAULT_CONFIG: Required<Omit<DinoOverlayConfig, 'apiKey' | 'customActions'>> = {
-  apiEndpoint: 'https://api.dinooverlay.com',
+  apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
   theme: 'auto',
   enableAnalytics: false,
   debug: false,

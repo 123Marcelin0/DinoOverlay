@@ -114,6 +114,15 @@ function initializeTestApiKeys(): void {
     isActive: true,
     expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
   });
+
+  // Add our generated test key
+  apiKeyStore.set('dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b', {
+    userId: 'test-user-123',
+    permissions: ['edit-image', 'chat'],
+    quotaLimit: 1000,
+    quotaUsed: 0,
+    isActive: true,
+  });
 }
 
 // API key management functions

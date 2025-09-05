@@ -18,7 +18,7 @@ The DinoOverlay system can be integrated into any website using a simple script 
     s.onload=function(){
       DinoOverlayLoader.init({
         apiKey: 'your-api-key-here',
-        apiEndpoint: 'https://api.dinooverlay.com'
+        apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay'
       });
     };
     document.head.appendChild(s);
@@ -33,7 +33,7 @@ The DinoOverlay system can be integrated into any website using a simple script 
 <script>
   window.DinoOverlayConfig = {
     apiKey: 'your-api-key-here',
-    apiEndpoint: 'https://api.dinooverlay.com',
+    apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
     theme: 'auto',
     enableAnalytics: true,
     debug: false,
@@ -67,7 +67,7 @@ function add_dino_overlay() {
     <script>
       window.DinoOverlayConfig = {
         apiKey: '<?php echo esc_js($api_key); ?>',
-        apiEndpoint: 'https://api.dinooverlay.com',
+        apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
         theme: 'auto',
         enableAnalytics: <?php echo get_option('dino_overlay_analytics', true) ? 'true' : 'false'; ?>
       };
@@ -119,7 +119,7 @@ const DinoOverlayProvider = ({ children, config }) => {
 // Usage
 <DinoOverlayProvider config={{
   apiKey: 'your-api-key',
-  apiEndpoint: 'https://api.dinooverlay.com',
+  apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
   theme: 'auto'
 }}>
   <YourApp />
@@ -154,7 +154,7 @@ export default {
         if (window.DinoOverlayLoader) {
           window.DinoOverlayLoader.init({
             apiKey: process.env.VUE_APP_DINO_OVERLAY_API_KEY,
-            apiEndpoint: 'https://api.dinooverlay.com',
+            apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
             theme: 'auto'
           });
         }
@@ -172,7 +172,7 @@ export default {
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `apiKey` | string | required | Your DinoOverlay API key |
-| `apiEndpoint` | string | `https://api.dinooverlay.com` | API endpoint URL |
+| `apiEndpoint` | string | `https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay` | API endpoint URL |
 | `theme` | string | `auto` | Theme mode: `light`, `dark`, or `auto` |
 | `enableAnalytics` | boolean | `true` | Enable usage analytics |
 | `debug` | boolean | `false` | Enable debug logging |
@@ -187,8 +187,8 @@ Add the following to your CSP header:
 
 ```
 script-src 'self' https://cdn.dinooverlay.com https://backup-cdn.dinooverlay.com;
-connect-src 'self' https://api.dinooverlay.com;
-img-src 'self' data: https://api.dinooverlay.com;
+connect-src 'self' https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay;
+img-src 'self' data: https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay;
 ```
 
 ### Subresource Integrity
