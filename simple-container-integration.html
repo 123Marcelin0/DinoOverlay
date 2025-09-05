@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Container Integration</title>
+</head>
+<body>
+    <!-- SIMPLE INTEGRATION: Just add a container class -->
+    <script>
+    window.DinoOverlayConfig = {
+      apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
+      apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+      theme: 'auto',
+      enableAnalytics: false,
+      debug: true,
+      
+      // SIMPLE AUTO-DETECTION: Just specify container classes
+      autoDetect: {
+        enabled: true,
+        containers: [
+          '.property-images',     // Most common
+          '.real-estate-gallery', // Alternative
+          '.listing-photos',      // Alternative
+          '#property-gallery'     // Alternative
+        ]
+      }
+    };
+    
+    // Simple auto-detection
+    function autoDetectImages() {
+      const containers = window.DinoOverlayConfig.autoDetect.containers;
+      let totalDetected = 0;
+      
+      containers.forEach(selector => {
+        const container = document.querySelector(selector);
+        if (container) {
+          const images = container.querySelectorAll('img');
+          images.forEach(img => {
+            img.classList.add('editable-room');
+            totalDetected++;
+          });
+          console.log(`✅ Found ${images.length} images in ${selector}`);
+        }
+      });
+      
+      console.log(`🎯 Total auto-detected images: ${totalDetected}`);
+    }
+    
+    // Run when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', autoDetectImages);
+    } else {
+      autoDetectImages();
+    }
+    </script>
+    
+    <!-- Load DinoOverlay -->
+    <script src="https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/cdn/dino-overlay-loader.min-0.1.0.js" async></script>
+    
+    <!-- USAGE: Just wrap your real estate images in a container -->
+    <div class="property-images">
+        <h2>Property Photos</h2>
+        <!-- ALL images in this container will automatically be editable -->
+        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop" alt="Living Room" />
+        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop" alt="Kitchen" />
+        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop" alt="Bedroom" />
+    </div>
+    
+    <!-- These images will be ignored (not in container) -->
+    <img src="https://via.placeholder.com/100x50/333/fff?text=LOGO" alt="Logo" />
+</body>
+</html>

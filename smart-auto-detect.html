@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay Smart Auto-Detection</title>
+</head>
+<body>
+    <!-- SMART AUTO-DETECTION SCRIPT -->
+    <script>
+    window.DinoOverlayConfig = {
+      apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
+      apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+      theme: 'auto',
+      enableAnalytics: false,
+      debug: true,
+      
+      // SMART AUTO-DETECTION
+      autoDetect: {
+        enabled: true,
+        mode: 'smart', // 'smart', 'container', 'all'
+        
+        // Smart detection rules
+        rules: {
+          // Detect by container classes/IDs
+          containers: [
+            '.property-gallery', '.real-estate-images', '.listing-photos',
+            '.property-photos', '.gallery-container', '#property-images',
+            '.property-listing', '.real-estate-gallery', '.home-photos'
+          ],
+          
+          // Detect by image characteristics
+          imageRules: {
+            // Alt text contains room/property keywords
+            altKeywords: ['room', 'kitchen', 'bedroom', 'living', 'bathroom', 'property', 'house', 'home', 'apartment'],
+            
+            // Filename contains keywords
+            srcKeywords: ['room', 'property', 'house', 'home', 'kitchen', 'bedroom', 'living', 'bathroom'],
+            
+            // Minimum size (likely property photos)
+            minWidth: 200,
+            minHeight: 150,
+            
+            // Data attributes
+            dataAttributes: ['data-room-type', 'data-property-id', 'data-listing-id']
+          },
+          
+          // Exclude these images
+          exclude: {
+            altKeywords: ['logo', 'icon', 'avatar', 'profile', 'banner'],
+            srcKeywords: ['logo', 'icon', 'avatar', 'profile', 'banner'],
+            selectors: ['.logo img', '.header img', '.footer img', '.nav img', '.menu img']
+          }
+        }
+      }
+    };
+    
+    // Enhanced auto-detection function
+    function initSmartDetection() {
+      if (!window.DinoOverlayConfig?.autoDetect?.enabled) return;
+      
+      const config = window.DinoOverlayConfig.autoDetect;
+      const detectedImages = new Set();
+      
+      // Method 1: Container-based detection
+      if (config.rules?.containers) {
+        config.rules.containers.forEach(selector => {
+          const containers = document.querySelectorAll(selector);
+          containers.forEach(container => {
+            const images = container.querySelectorAll('img');
+            images.forEach(img => {
+              if (shouldIncludeImage(img, config.rules)) {
+                img.classList.add('editable-room');
+                detectedImages.add(img);
+                console.log('🎯 Auto-detected image in container:', selector, img.src);
+              }
+            });
+          });
+        });
+      }
+      
+      // Method 2: Smart image detection
+      if (config.mode === 'smart' || config.mode === 'all') {
+        const allImages = document.querySelectorAll('img');
+        allImages.forEach(img => {
+          if (!detectedImages.has(img) && shouldIncludeImage(img, config.rules)) {
+            img.classList.add('editable-room');
+            detectedImages.add(img);
+            console.log('🤖 Smart-detected image:', img.src);
+          }
+        });
+      }
+      
+      console.log(`✅ DinoOverlay auto-detected ${detectedImages.size} editable images`);
+      return detectedImages.size;
+    }
+    
+    function shouldIncludeImage(img, rules) {
+      if (!img.src || !img.complete) return false;
+      
+      // Check exclusions first
+      if (rules?.exclude) {
+        // Check alt text exclusions
+        if (rules.exclude.altKeywords && img.alt) {
+          const altLower = img.alt.toLowerCase();
+          if (rules.exclude.altKeywords.some(keyword => altLower.includes(keyword))) {
+            return false;
+          }
+        }
+        
+        // Check src exclusions
+        if (rules.exclude.srcKeywords) {
+          const srcLower = img.src.toLowerCase();
+          if (rules.exclude.srcKeywords.some(keyword => srcLower.includes(keyword))) {
+            return false;
+          }
+        }
+        
+        // Check selector exclusions
+        if (rules.exclude.selectors) {
+          if (rules.exclude.selectors.some(selector => img.matches(selector))) {
+            return false;
+          }
+        }
+      }
+      
+      let score = 0;
+      
+      // Check alt text keywords
+      if (rules?.imageRules?.altKeywords && img.alt) {
+        const altLower = img.alt.toLowerCase();
+        const matches = rules.imageRules.altKeywords.filter(keyword => altLower.includes(keyword));
+        score += matches.length * 2; // Alt text is important
+      }
+      
+      // Check src keywords
+      if (rules?.imageRules?.srcKeywords) {
+        const srcLower = img.src.toLowerCase();
+        const matches = rules.imageRules.srcKeywords.filter(keyword => srcLower.includes(keyword));
+        score += matches.length;
+      }
+      
+      // Check data attributes
+      if (rules?.imageRules?.dataAttributes) {
+        const hasDataAttr = rules.imageRules.dataAttributes.some(attr => img.hasAttribute(attr));
+        if (hasDataAttr) score += 3;
+      }
+      
+      // Check image size
+      if (rules?.imageRules?.minWidth && rules?.imageRules?.minHeight) {
+        if (img.naturalWidth >= rules.imageRules.minWidth && 
+            img.naturalHeight >= rules.imageRules.minHeight) {
+          score += 1;
+        }
+      }
+      
+      // Return true if score is high enough
+      return score >= 1;
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSmartDetection);
+    } else {
+      initSmartDetection();
+    }
+    
+    // Re-scan for new images (for dynamic content)
+    const observer = new MutationObserver((mutations) => {
+      let hasNewImages = false;
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === 1) { // Element node
+            if (node.tagName === 'IMG' || node.querySelectorAll('img').length > 0) {
+              hasNewImages = true;
+            }
+          }
+        });
+      });
+      
+      if (hasNewImages) {
+        setTimeout(initSmartDetection, 100); // Small delay to let images load
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    </script>
+    
+    <!-- Load DinoOverlay -->
+    <script src="https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/cdn/dino-overlay-loader.min-0.1.0.js" async></script>
+    
+    <!-- DEMO: Property Gallery -->
+    <div class="property-gallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop" alt="Modern Living Room" />
+        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop" alt="Chef's Kitchen" />
+        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop" alt="Master Bedroom" />
+    </div>
+    
+    <!-- These images will be ignored (logos, etc.) -->
+    <div class="header">
+        <img src="https://via.placeholder.com/100x50/333/fff?text=LOGO" alt="Company Logo" />
+    </div>
+</body>
+</html>

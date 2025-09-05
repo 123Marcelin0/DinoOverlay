@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay - Fully Automatic Detection</title>
+</head>
+<body>
+    <!-- FULLY AUTOMATIC DETECTION - NO SETUP REQUIRED -->
+    <script>
+    window.DinoOverlayConfig = {
+      apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
+      apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+      theme: 'auto',
+      enableAnalytics: false,
+      debug: true,
+      
+      // FULLY AUTOMATIC - NO MANUAL SETUP NEEDED
+      autoDetect: {
+        enabled: true,
+        mode: 'automatic', // Detects ALL suitable images automatically
+        
+        // Smart detection criteria
+        criteria: {
+          // Minimum image size (property photos are usually large)
+          minWidth: 200,
+          minHeight: 150,
+          
+          // Keywords in alt text or filename that suggest real estate
+          includeKeywords: [
+            'room', 'kitchen', 'bedroom', 'living', 'bathroom', 'property', 
+            'house', 'home', 'apartment', 'condo', 'interior', 'dining',
+            'office', 'studio', 'loft', 'villa', 'mansion', 'penthouse'
+          ],
+          
+          // Keywords that suggest NOT real estate (exclude these)
+          excludeKeywords: [
+            'logo', 'icon', 'avatar', 'profile', 'banner', 'ad', 'advertisement',
+            'button', 'nav', 'menu', 'header', 'footer', 'sidebar', 'widget'
+          ],
+          
+          // File extensions that are likely photos
+          photoExtensions: ['.jpg', '.jpeg', '.png', '.webp'],
+          
+          // Aspect ratios typical for room photos (width/height)
+          aspectRatios: {
+            min: 0.5,  // Very tall images (9:16)
+            max: 3.0   // Very wide images (3:1)
+          }
+        }
+      }
+    };
+    
+    // FULLY AUTOMATIC IMAGE DETECTION
+    function detectRealEstateImages() {
+      const config = window.DinoOverlayConfig.autoDetect.criteria;
+      const allImages = document.querySelectorAll('img');
+      let detectedCount = 0;
+      
+      allImages.forEach(img => {
+        if (isRealEstateImage(img, config)) {
+          img.classList.add('editable-room');
+          detectedCount++;
+          
+          // Add visual indicator
+          img.style.cursor = 'pointer';
+          img.title = img.title || 'Click to edit with AI';
+          
+          console.log('🏠 Auto-detected real estate image:', img.src);
+        }
+      });
+      
+      console.log(`✅ Automatically detected ${detectedCount} real estate images`);
+      return detectedCount;
+    }
+    
+    function isRealEstateImage(img, config) {
+      // Skip if image not loaded or no src
+      if (!img.src || !img.complete || img.naturalWidth === 0) {
+        return false;
+      }
+      
+      let score = 0;
+      const alt = (img.alt || '').toLowerCase();
+      const src = img.src.toLowerCase();
+      const title = (img.title || '').toLowerCase();
+      
+      // 1. Check size (property photos are usually decent size)
+      if (img.naturalWidth >= config.minWidth && img.naturalHeight >= config.minHeight) {
+        score += 2;
+      }
+      
+      // 2. Check aspect ratio (property photos have reasonable ratios)
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+      if (aspectRatio >= config.aspectRatios.min && aspectRatio <= config.aspectRatios.max) {
+        score += 1;
+      }
+      
+      // 3. Check for real estate keywords in alt text
+      const altMatches = config.includeKeywords.filter(keyword => alt.includes(keyword));
+      score += altMatches.length * 3; // Alt text is very important
+      
+      // 4. Check for real estate keywords in filename
+      const srcMatches = config.includeKeywords.filter(keyword => src.includes(keyword));
+      score += srcMatches.length * 2;
+      
+      // 5. Check for real estate keywords in title
+      const titleMatches = config.includeKeywords.filter(keyword => title.includes(keyword));
+      score += titleMatches.length * 2;
+      
+      // 6. Check file extension
+      const hasPhotoExtension = config.photoExtensions.some(ext => src.includes(ext));
+      if (hasPhotoExtension) {
+        score += 1;
+      }
+      
+      // 7. EXCLUDE images with exclude keywords
+      const excludeInAlt = config.excludeKeywords.some(keyword => alt.includes(keyword));
+      const excludeInSrc = config.excludeKeywords.some(keyword => src.includes(keyword));
+      const excludeInTitle = config.excludeKeywords.some(keyword => title.includes(keyword));
+      
+      if (excludeInAlt || excludeInSrc || excludeInTitle) {
+        return false; // Definitely not a real estate image
+      }
+      
+      // 8. Check if image is in common non-content areas
+      const parent = img.closest('header, footer, nav, .header, .footer, .nav, .menu, .sidebar, .widget');
+      if (parent) {
+        return false; // Likely a UI element
+      }
+      
+      // 9. Check if image is very small (likely an icon)
+      if (img.naturalWidth < 100 || img.naturalHeight < 100) {
+        return false;
+      }
+      
+      // 10. Bonus points for being in likely content areas
+      const contentParent = img.closest('main, article, .content, .gallery, .listing, .property, .photos');
+      if (contentParent) {
+        score += 2;
+      }
+      
+      // Return true if score is high enough
+      return score >= 3; // Adjust threshold as needed
+    }
+    
+    // Initialize detection
+    function initAutoDetection() {
+      // Wait for images to load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          setTimeout(detectRealEstateImages, 500); // Small delay for images to load
+        });
+      } else {
+        setTimeout(detectRealEstateImages, 500);
+      }
+      
+      // Re-scan when new images are added (for dynamic content)
+      const observer = new MutationObserver((mutations) => {
+        let hasNewImages = false;
+        mutations.forEach(mutation => {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === 1) {
+              if (node.tagName === 'IMG' || node.querySelectorAll('img').length > 0) {
+                hasNewImages = true;
+              }
+            }
+          });
+        });
+        
+        if (hasNewImages) {
+          setTimeout(detectRealEstateImages, 200);
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      // Also re-scan when images finish loading
+      window.addEventListener('load', () => {
+        setTimeout(detectRealEstateImages, 1000);
+      });
+    }
+    
+    initAutoDetection();
+    </script>
+    
+    <!-- Load DinoOverlay -->
+    <script src="https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/cdn/dino-overlay-loader.min-0.1.0.js" async></script>
+    
+    <!-- DEMO: These images will be automatically detected -->
+    <div style="padding: 20px;">
+        <h1>Real Estate Listing</h1>
+        
+        <!-- These WILL be detected (real estate keywords + good size) -->
+        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop" alt="Modern living room with fireplace" style="width: 300px; height: 200px; margin: 10px;" />
+        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop" alt="Spacious kitchen with island" style="width: 300px; height: 200px; margin: 10px;" />
+        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop" alt="Master bedroom suite" style="width: 300px; height: 200px; margin: 10px;" />
+        
+        <!-- These will NOT be detected (no keywords, wrong context) -->
+        <img src="https://via.placeholder.com/100x50/333/fff?text=LOGO" alt="Company logo" style="width: 100px; height: 50px;" />
+        <img src="https://via.placeholder.com/30x30/666/fff?text=★" alt="Rating icon" style="width: 30px; height: 30px;" />
+        
+        <!-- This WILL be detected (property keyword) -->
+        <img src="https://images.unsplash.com/photo-1574180045827-681f8a1a9622?w=600&h=400&fit=crop" alt="Beautiful property exterior" style="width: 300px; height: 200px; margin: 10px;" />
+    </div>
+</body>
+</html>

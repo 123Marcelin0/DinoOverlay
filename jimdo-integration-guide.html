@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jimdo DinoOverlay Integration Guide</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .step { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .code { background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 5px; font-family: monospace; overflow-x: auto; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        img { max-width: 100%; height: auto; border: 2px dashed #ccc; }
+    </style>
+</head>
+<body>
+    <h1>🦕 DinoOverlay + Jimdo Integration</h1>
+    
+    <div class="success">
+        <h3>✅ Your DinoOverlay API is Ready!</h3>
+        <p><strong>API Endpoint:</strong> https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay</p>
+        <p><strong>Test API Key:</strong> dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b</p>
+    </div>
+
+    <div class="step">
+        <h2>Step 1: Add DinoOverlay Script to Jimdo</h2>
+        <p><strong>Method A: Header Integration (Recommended)</strong></p>
+        <ol>
+            <li>Go to your <strong>Jimdo Dashboard</strong></li>
+            <li>Click <strong>Settings</strong> → <strong>SEO</strong> → <strong>Header</strong></li>
+            <li>In the <strong>"Head"</strong> section, paste this code:</li>
+        </ol>
+        
+        <div class="code">
+&lt;!-- DinoOverlay Integration for Jimdo --&gt;
+&lt;script&gt;
+  window.DinoOverlayConfig = {
+    apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
+    apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+    theme: 'auto',
+    enableAnalytics: false,
+    debug: true
+  };
+&lt;/script&gt;
+&lt;script src="https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/cdn/dino-overlay-loader.min-0.1.0.js" async&gt;&lt;/script&gt;
+        </div>
+        
+        <p><strong>Method B: HTML Widget</strong></p>
+        <ol>
+            <li>In your Jimdo page editor, click <strong>Add Element</strong></li>
+            <li>Choose <strong>More</strong> → <strong>Widget/HTML</strong></li>
+            <li>Paste the same code above</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Step 2: Make Images Editable</h2>
+        
+        <p><strong>For Existing Images:</strong></p>
+        <ol>
+            <li>Click on any image in your Jimdo editor</li>
+            <li>Click the <strong>settings/gear icon</strong></li>
+            <li>Look for <strong>"CSS Class"</strong> or <strong>"Advanced"</strong> settings</li>
+            <li>Add the class: <code>editable-room</code></li>
+        </ol>
+        
+        <p><strong>For New Images (HTML Widget):</strong></p>
+        <div class="code">
+&lt;img src="your-room-image.jpg" 
+     class="editable-room" 
+     alt="Living Room" 
+     style="width: 100%; height: auto; cursor: pointer;" /&gt;
+        </div>
+    </div>
+
+    <div class="step">
+        <h2>Step 3: Test Your Integration</h2>
+        <p>After adding the code:</p>
+        <ol>
+            <li><strong>Save and publish</strong> your Jimdo site</li>
+            <li><strong>Visit your live site</strong></li>
+            <li><strong>Click on any image</strong> with the <code>editable-room</code> class</li>
+            <li>You should see the <strong>DinoOverlay interface</strong> appear!</li>
+        </ol>
+        
+        <div class="warning">
+            <strong>⚠️ Jimdo Limitations:</strong>
+            <ul>
+                <li>Some Jimdo plans may restrict custom HTML/JavaScript</li>
+                <li>If the widget doesn't appear, try the HTML Widget method</li>
+                <li>Make sure your Jimdo plan supports custom code</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <h2>Step 4: Example Implementation</h2>
+        <p>Here's a complete example for a Jimdo HTML widget:</p>
+        
+        <div class="code">
+&lt;!-- Complete Jimdo HTML Widget Code --&gt;
+&lt;div style="text-align: center; padding: 20px;"&gt;
+    &lt;h3&gt;🏠 AI-Powered Room Editor&lt;/h3&gt;
+    &lt;p&gt;Click on the image below to edit it with AI:&lt;/p&gt;
+    
+    &lt;img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop" 
+         class="editable-room" 
+         alt="Modern Living Room" 
+         style="width: 100%; max-width: 600px; height: auto; border-radius: 10px; cursor: pointer; transition: transform 0.3s ease;"
+         onmouseover="this.style.transform='scale(1.02)'"
+         onmouseout="this.style.transform='scale(1)'" /&gt;
+    
+    &lt;p style="margin-top: 10px; color: #666; font-size: 14px;"&gt;
+        ✨ Click the image to start AI editing
+    &lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- DinoOverlay Script (if not added to header) --&gt;
+&lt;script&gt;
+  if (!window.DinoOverlayConfig) {
+    window.DinoOverlayConfig = {
+      apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
+      apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+      theme: 'auto',
+      enableAnalytics: false,
+      debug: true
+    };
+    
+    var script = document.createElement('script');
+    script.src = 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/cdn/dino-overlay-loader.min-0.1.0.js';
+    script.async = true;
+    document.head.appendChild(script);
+  }
+&lt;/script&gt;
+        </div>
+    </div>
+
+    <div class="success">
+        <h2>🎉 You're Ready!</h2>
+        <p>Your DinoOverlay system is now integrated with Jimdo. Visitors can click on room images and use AI to edit them instantly!</p>
+        
+        <p><strong>What happens when users click:</strong></p>
+        <ul>
+            <li>✨ Glassmorphic overlay appears</li>
+            <li>🎨 Quick action buttons (Add Sofa, Modern Style, etc.)</li>
+            <li>💬 Chat interface for custom requests</li>
+            <li>🤖 AI processes the image and shows results</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h2>🔧 Troubleshooting</h2>
+        <p><strong>If the widget doesn't appear:</strong></p>
+        <ol>
+            <li>Check browser console for errors (F12)</li>
+            <li>Make sure your Jimdo plan supports custom HTML</li>
+            <li>Try adding the script to different pages</li>
+            <li>Contact Jimdo support about custom JavaScript restrictions</li>
+        </ol>
+        
+        <p><strong>Test URL:</strong> <a href="https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/demo-working.html" target="_blank">View Working Demo</a></p>
+    </div>
+</body>
+</html>
