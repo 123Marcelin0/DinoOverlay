@@ -1,0 +1,173 @@
+<!-- INLINE DINOOVERLAY - NO CORS ISSUES -->
+<script>
+console.log('🦕 DinoOverlay Starting (Inline Version)...');
+
+// Configuration
+window.DinoOverlayConfig = {
+  apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
+  apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+  theme: 'auto',
+  enableAnalytics: false,
+  debug: true
+};
+
+// Simple DinoOverlay Implementation
+class SimpleDinoOverlay {
+  constructor() {
+    this.detectedImages = new Set();
+    this.init();
+  }
+  
+  init() {
+    console.log('🚀 Initializing DinoOverlay...');
+    this.detectImages();
+    this.watchForNewImages();
+  }
+  
+  detectImages() {
+    const images = document.querySelectorAll('img');
+    console.log(`📊 Found ${images.length} images on page`);
+    
+    let detectedCount = 0;
+    
+    images.forEach((img, index) => {
+      if (this.shouldMakeEditable(img)) {
+        this.makeImageEditable(img, index);
+        detectedCount++;
+      }
+    });
+    
+    console.log(`✅ Made ${detectedCount} images editable`);
+  }
+  
+  shouldMakeEditable(img) {
+    // Skip if already processed
+    if (this.detectedImages.has(img)) return false;
+    
+    // Skip if no source or not loaded
+    if (!img.src || !img.complete) return false;
+    
+    // Skip very small images (likely icons)
+    if (img.naturalWidth < 100 || img.naturalHeight < 100) return false;
+    
+    // For testing, make all reasonable-sized images editable
+    return true;
+  }
+  
+  makeImageEditable(img, index) {
+    this.detectedImages.add(img);
+    
+    // Add visual indicators
+    img.style.cursor = 'pointer';
+    img.style.transition = 'all 0.3s ease';
+    img.style.border = '2px solid transparent';
+    
+    // Add hover effect
+    img.addEventListener('mouseenter', () => {
+      img.style.border = '2px solid #00ff00';
+      img.style.transform = 'scale(1.02)';
+      img.style.boxShadow = '0 4px 20px rgba(0,255,0,0.3)';
+    });
+    
+    img.addEventListener('mouseleave', () => {
+      img.style.border = '2px solid transparent';
+      img.style.transform = 'scale(1)';
+      img.style.boxShadow = 'none';
+    });
+    
+    // Add click handler
+    img.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showOverlay(img);
+    });
+    
+    console.log(`🎯 Image ${index + 1} made editable:`, img.src.substring(0, 50) + '...');
+  }
+  
+  showOverlay(img) {
+    console.log('🎨 Opening DinoOverlay for:', img.src);
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
+    
+    // Create modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    `;
+    
+    modal.innerHTML = `
+      <button onclick="this.closest('[style*=\"position: fixed\"]').remove()" 
+              style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+      <h2>🦕 DinoOverlay AI Editor</h2>
+      <img src="${img.src}" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px; margin: 20px 0;" />
+      <p>AI-powered image editing for real estate</p>
+      <div style="margin: 20px 0;">
+        <button onclick="alert('Adding modern sofa...')" style="margin: 5px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">✨ Add Modern Sofa</button>
+        <button onclick="alert('Applying Scandinavian style...')" style="margin: 5px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">🏠 Scandinavian Style</button>
+        <button onclick="alert('Improving lighting...')" style="margin: 5px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">💡 Better Lighting</button>
+      </div>
+      <p style="color: #666; font-size: 14px;"><em>Demo mode - In production, this would connect to your AI API</em></p>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Close on background click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.remove();
+      }
+    });
+  }
+  
+  watchForNewImages() {
+    // Watch for dynamically added images
+    const observer = new MutationObserver(() => {
+      setTimeout(() => this.detectImages(), 500);
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+}
+
+// Initialize when page loads
+function initDinoOverlay() {
+  console.log('🎯 Starting DinoOverlay initialization...');
+  new SimpleDinoOverlay();
+}
+
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDinoOverlay);
+} else {
+  initDinoOverlay();
+}
+
+// Also run after a delay to catch late-loading images
+setTimeout(initDinoOverlay, 2000);
+setTimeout(initDinoOverlay, 5000);
+
+console.log('🦕 DinoOverlay script loaded successfully!');
+</script>

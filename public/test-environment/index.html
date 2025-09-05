@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay Test Environment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .test-section {
+            margin-bottom: 50px;
+            padding: 30px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .property-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        
+        .property-info {
+            padding: 20px;
+        }
+        
+        .property-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .property-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .debug-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+            z-index: 10000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .debug-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .debug-log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .debug-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .debug-controls button:hover {
+            background: #5a6fd8;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+        .status-info { background: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦕 DinoOverlay Test Environment</h1>
+            <p>Complete testing environment for real estate image editing integration</p>
+        </div>
+        
+        <div class="content">
+            <div class="test-section">
+                <h2>🏠 Real Estate Property Listings</h2>
+                <p>These images should automatically be detected and enhanced with DinoOverlay editing capabilities:</p>
+                
+                <div class="image-grid">
+                    <div class="property-card">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=250&fit=crop" 
+                             alt="Modern house exterior" 
+                             class="property-image real-estate-photo">
+                        <div class="property-info">
+                            <div class="property-title">Modern Family Home</div>
+                            <div class="property-price">$750,000</div>
+                            <div class="property-details">4 bed • 3 bath • 2,400 sq ft</div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card">
+                        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=250&fit=crop" 
+                             alt="Luxury home interior" 
+                             class="property-image home-interior">
+                        <div class="property-info">
+                            <div class="property-title">Luxury Downtown Condo</div>
+                            <div class="property-price">$1,200,000</div>
+                            <div class="property-details">3 bed • 2 bath • 1,800 sq ft</div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card">
+                        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=250&fit=crop" 
+                             alt="Cozy house kitchen" 
+                             class="property-image kitchen-photo">
+                        <div class="property-info">
+                            <div class="property-title">Charming Suburban Home</div>
+                            <div class="property-price">$525,000</div>
+                            <div class="property-details">3 bed • 2 bath • 1,600 sq ft</div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card">
+                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=250&fit=crop" 
+                             alt="Beautiful living room" 
+                             class="property-image living-room">
+                        <div class="property-info">
+                            <div class="property-title">Contemporary Villa</div>
+                            <div class="property-price">$950,000</div>
+                            <div class="property-details">5 bed • 4 bath • 3,200 sq ft</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="test-section">
+                <h2>🖼️ Mixed Content Test</h2>
+                <p>These images should NOT be detected (non-real estate content):</p>
+                
+                <div class="image-grid">
+                    <div class="property-card">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop" 
+                             alt="Mountain landscape" 
+                             class="property-image landscape-photo">
+                        <div class="property-info">
+                            <div class="property-title">Mountain Landscape</div>
+                            <div class="property-details">Should not be detected</div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card">
+                        <img src="https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=400&h=250&fit=crop" 
+                             alt="Food photography" 
+                             class="property-image food-photo">
+                        <div class="property-info">
+                            <div class="property-title">Food Photography</div>
+                            <div class="property-details">Should not be detected</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="debug-panel">
+        <h3>🔧 Debug Panel</h3>
+        
+        <div class="debug-controls">
+            <button onclick="testAPI()">Test API</button>
+            <button onclick="clearLogs()">Clear Logs</button>
+            <button onclick="reloadOverlay()">Reload Overlay</button>
+        </div>
+        
+        <div>
+            <h4>Status:</h4>
+            <div id="status-display">
+                <span class="status-indicator status-info"></span>
+                <span>Initializing...</span>
+            </div>
+        </div>
+        
+        <div>
+            <h4>Debug Log:</h4>
+            <div id="debug-log" class="debug-log">
+                Loading DinoOverlay...
+            </div>
+        </div>
+        
+        <div>
+            <h4>Detected Images:</h4>
+            <div id="detected-images">0 images detected</div>
+        </div>
+    </div>
+
+    <!-- DinoOverlay Integration Script -->
+    <script>
+        // Debug logging system
+        const debugLog = document.getElementById('debug-log');
+        const statusDisplay = document.getElementById('status-display');
+        const detectedImagesDisplay = document.getElementById('detected-images');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            debugLog.textContent += logEntry;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            
+            // Update status indicator
+            const indicator = statusDisplay.querySelector('.status-indicator');
+            const statusText = statusDisplay.querySelector('span:last-child');
+            
+            indicator.className = `status-indicator status-${type}`;
+            statusText.textContent = message;
+            
+            console.log(`DinoOverlay: ${message}`);
+        }
+        
+        function clearLogs() {
+            debugLog.textContent = '';
+            log('Debug log cleared');
+        }
+        
+        async function testAPI() {
+            log('Testing API connection...', 'info');
+            try {
+                const response = await fetch('https://dino-overlay-system.vercel.app/api/overlay/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Test connection',
+                        imageUrl: 'test'
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ API connection successful', 'success');
+                } else {
+                    log(`❌ API error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ API connection failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function reloadOverlay() {
+            log('Reloading DinoOverlay...', 'info');
+            location.reload();
+        }
+        
+        // Initialize DinoOverlay
+        log('Starting DinoOverlay initialization...');
+    </script>    <!-
+- Complete DinoOverlay Integration -->
+    <script>
+        (function() {
+            // Configuration
+            const CONFIG = {
+                apiBaseUrl: 'https://dino-overlay-system.vercel.app/api/overlay',
+                detectionKeywords: [
+                    'house', 'home', 'property', 'real estate', 'kitchen', 'bedroom', 
+                    'living room', 'bathroom', 'interior', 'exterior', 'apartment', 
+                    'condo', 'villa', 'mansion', 'cottage', 'cabin'
+                ],
+                minImageSize: { width: 200, height: 150 }
+            };
+            
+            let detectedImages = [];
+            let overlayManager = null;
+            
+            // Image detection system
+            function detectRealEstateImages() {
+                const images = document.querySelectorAll('img');
+                const detected = [];
+                
+                images.forEach((img, index) => {
+                    if (isRealEstateImage(img)) {
+                        detected.push({
+                            element: img,
+                            id: `dino-img-${index}`,
+                            src: img.src,
+                            alt: img.alt || ''
+                        });
+                        
+                        // Add visual indicator
+                        img.style.border = '3px solid #667eea';
+                        img.style.borderRadius = '8px';
+                        img.title = 'DinoOverlay: Click to edit this image';
+                    }
+                });
+                
+                detectedImages = detected;
+                detectedImagesDisplay.textContent = `${detected.length} images detected`;
+                log(`🔍 Detected ${detected.length} real estate images`);
+                
+                return detected;
+            }
+            
+            function isRealEstateImage(img) {
+                // Check image size
+                if (img.naturalWidth < CONFIG.minImageSize.width || 
+                    img.naturalHeight < CONFIG.minImageSize.height) {
+                    return false;
+                }
+                
+                // Check alt text and surrounding context
+                const altText = (img.alt || '').toLowerCase();
+                const className = (img.className || '').toLowerCase();
+                const parentText = img.parentElement ? 
+                    img.parentElement.textContent.toLowerCase() : '';
+                
+                const searchText = `${altText} ${className} ${parentText}`;
+                
+                return CONFIG.detectionKeywords.some(keyword => 
+                    searchText.includes(keyword)
+                );
+            }
+            
+            // Overlay Manager
+            class DinoOverlayManager {
+                constructor() {
+                    this.activeOverlay = null;
+                    this.isProcessing = false;
+                }
+                
+                async showOverlay(imageData) {
+                    if (this.isProcessing) return;
+                    
+                    log(`🎨 Opening overlay for image: ${imageData.alt || 'Untitled'}`);
+                    
+                    // Create overlay
+                    const overlay = this.createOverlay(imageData);
+                    document.body.appendChild(overlay);
+                    this.activeOverlay = overlay;
+                    
+                    // Animate in
+                    requestAnimationFrame(() => {
+                        overlay.style.opacity = '1';
+                        overlay.querySelector('.overlay-content').style.transform = 'scale(1)';
+                    });
+                }
+                
+                createOverlay(imageData) {
+                    const overlay = document.createElement('div');
+                    overlay.className = 'dino-overlay';
+                    overlay.innerHTML = `
+                        <div class="overlay-backdrop" onclick="dinoOverlay.closeOverlay()"></div>
+                        <div class="overlay-content">
+                            <div class="overlay-header">
+                                <h3>🦕 DinoOverlay - AI Image Editor</h3>
+                                <button class="close-btn" onclick="dinoOverlay.closeOverlay()">×</button>
+                            </div>
+                            
+                            <div class="overlay-body">
+                                <div class="image-preview">
+                                    <img src="${imageData.src}" alt="${imageData.alt}" />
+                                </div>
+                                
+                                <div class="editing-panel">
+                                    <div class="quick-actions">
+                                        <h4>Quick Actions</h4>
+                                        <button onclick="dinoOverlay.applyEdit('brighten')" class="action-btn">
+                                            ☀️ Brighten
+                                        </button>
+                                        <button onclick="dinoOverlay.applyEdit('enhance')" class="action-btn">
+                                            ✨ Enhance
+                                        </button>
+                                        <button onclick="dinoOverlay.applyEdit('staging')" class="action-btn">
+                                            🏠 Virtual Staging
+                                        </button>
+                                        <button onclick="dinoOverlay.applyEdit('declutter')" class="action-btn">
+                                            🧹 Declutter
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="custom-prompt">
+                                        <h4>Custom Edit</h4>
+                                        <textarea id="custom-prompt" placeholder="Describe how you'd like to edit this image..."></textarea>
+                                        <button onclick="dinoOverlay.applyCustomEdit()" class="action-btn primary">
+                                            🎨 Apply Custom Edit
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="processing-status" id="processing-status" style="display: none;">
+                                        <div class="spinner"></div>
+                                        <span>Processing your edit...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add styles
+                    if (!document.getElementById('dino-overlay-styles')) {
+                        this.addOverlayStyles();
+                    }
+                    
+                    return overlay;
+                }
+                
+                addOverlayStyles() {
+                    const styles = document.createElement('style');
+                    styles.id = 'dino-overlay-styles';
+                    styles.textContent = `
+                        .dino-overlay {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            z-index: 10000;
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                        }
+                        
+                        .overlay-backdrop {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0, 0, 0, 0.8);
+                        }
+                        
+                        .overlay-content {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%) scale(0.9);
+                            background: white;
+                            border-radius: 16px;
+                            width: 90%;
+                            max-width: 1000px;
+                            max-height: 90vh;
+                            overflow: hidden;
+                            transition: transform 0.3s ease;
+                            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                        }
+                        
+                        .overlay-header {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 20px 30px;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                        }
+                        
+                        .overlay-header h3 {
+                            margin: 0;
+                            font-size: 1.3rem;
+                        }
+                        
+                        .close-btn {
+                            background: none;
+                            border: none;
+                            color: white;
+                            font-size: 2rem;
+                            cursor: pointer;
+                            padding: 0;
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: background 0.2s ease;
+                        }
+                        
+                        .close-btn:hover {
+                            background: rgba(255, 255, 255, 0.2);
+                        }
+                        
+                        .overlay-body {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 30px;
+                            padding: 30px;
+                            max-height: calc(90vh - 100px);
+                            overflow-y: auto;
+                        }
+                        
+                        .image-preview img {
+                            width: 100%;
+                            height: auto;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                        }
+                        
+                        .editing-panel h4 {
+                            color: #333;
+                            margin-bottom: 15px;
+                            font-size: 1.1rem;
+                        }
+                        
+                        .quick-actions {
+                            margin-bottom: 30px;
+                        }
+                        
+                        .quick-actions .action-btn {
+                            display: block;
+                            width: 100%;
+                            margin-bottom: 10px;
+                            padding: 12px 20px;
+                            background: #f8f9fa;
+                            border: 2px solid #e9ecef;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-size: 1rem;
+                            transition: all 0.2s ease;
+                            text-align: left;
+                        }
+                        
+                        .quick-actions .action-btn:hover {
+                            background: #667eea;
+                            color: white;
+                            border-color: #667eea;
+                        }
+                        
+                        .custom-prompt textarea {
+                            width: 100%;
+                            height: 100px;
+                            padding: 15px;
+                            border: 2px solid #e9ecef;
+                            border-radius: 8px;
+                            font-family: inherit;
+                            font-size: 1rem;
+                            resize: vertical;
+                            margin-bottom: 15px;
+                        }
+                        
+                        .custom-prompt textarea:focus {
+                            outline: none;
+                            border-color: #667eea;
+                        }
+                        
+                        .action-btn.primary {
+                            background: #667eea;
+                            color: white;
+                            border-color: #667eea;
+                        }
+                        
+                        .action-btn.primary:hover {
+                            background: #5a6fd8;
+                        }
+                        
+                        .processing-status {
+                            display: flex;
+                            align-items: center;
+                            gap: 15px;
+                            padding: 20px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            margin-top: 20px;
+                        }
+                        
+                        .spinner {
+                            width: 24px;
+                            height: 24px;
+                            border: 3px solid #e9ecef;
+                            border-top: 3px solid #667eea;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                        }
+                        
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                        
+                        @media (max-width: 768px) {
+                            .overlay-body {
+                                grid-template-columns: 1fr;
+                                gap: 20px;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(styles);
+                }
+                
+                closeOverlay() {
+                    if (this.activeOverlay) {
+                        this.activeOverlay.style.opacity = '0';
+                        setTimeout(() => {
+                            if (this.activeOverlay && this.activeOverlay.parentNode) {
+                                this.activeOverlay.parentNode.removeChild(this.activeOverlay);
+                            }
+                            this.activeOverlay = null;
+                        }, 300);
+                    }
+                    log('🔒 Overlay closed');
+                }
+                
+                async applyEdit(editType) {
+                    const prompts = {
+                        brighten: 'Make this image brighter and more vibrant',
+                        enhance: 'Enhance the overall quality and appeal of this real estate photo',
+                        staging: 'Add virtual staging to make this space look more furnished and appealing',
+                        declutter: 'Remove clutter and make this space look cleaner and more organized'
+                    };
+                    
+                    await this.processEdit(prompts[editType] || editType);
+                }
+                
+                async applyCustomEdit() {
+                    const prompt = document.getElementById('custom-prompt').value.trim();
+                    if (!prompt) {
+                        alert('Please enter a description for your custom edit');
+                        return;
+                    }
+                    
+                    await this.processEdit(prompt);
+                }
+                
+                async processEdit(prompt) {
+                    if (this.isProcessing) return;
+                    
+                    this.isProcessing = true;
+                    const statusEl = document.getElementById('processing-status');
+                    statusEl.style.display = 'flex';
+                    
+                    log(`🔄 Processing edit: "${prompt}"`);
+                    
+                    try {
+                        const response = await fetch(`${CONFIG.apiBaseUrl}/edit-image`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                imageUrl: this.getCurrentImageUrl(),
+                                prompt: prompt,
+                                userId: 'test-user'
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            log('✅ Edit completed successfully', 'success');
+                            
+                            // Show result (in real implementation, this would update the image)
+                            alert(`Edit completed! In a real implementation, the image would be updated with the edited version.`);
+                        } else {
+                            throw new Error(`API error: ${response.status}`);
+                        }
+                    } catch (error) {
+                        log(`❌ Edit failed: ${error.message}`, 'error');
+                        alert(`Edit failed: ${error.message}`);
+                    } finally {
+                        this.isProcessing = false;
+                        statusEl.style.display = 'none';
+                    }
+                }
+                
+                getCurrentImageUrl() {
+                    const img = this.activeOverlay?.querySelector('.image-preview img');
+                    return img ? img.src : '';
+                }
+            }
+            
+            // Initialize
+            function initializeDinoOverlay() {
+                log('🚀 Initializing DinoOverlay system...');
+                
+                // Create overlay manager
+                overlayManager = new DinoOverlayManager();
+                window.dinoOverlay = overlayManager;
+                
+                // Wait for images to load
+                setTimeout(() => {
+                    const detected = detectRealEstateImages();
+                    
+                    // Add click handlers
+                    detected.forEach(imageData => {
+                        imageData.element.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            overlayManager.showOverlay(imageData);
+                        });
+                    });
+                    
+                    log('✅ DinoOverlay initialization complete', 'success');
+                }, 1000);
+            }
+            
+            // Start when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeDinoOverlay);
+            } else {
+                initializeDinoOverlay();
+            }
+            
+        })();
+    </script>
+</body>
+</html>

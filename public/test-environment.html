@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoOverlay Test Environment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .status-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .status-item.success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .status-item.error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .status-item.info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .image-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .test-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .image-info {
+            padding: 15px;
+        }
+        
+        .image-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .image-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .debug-console {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+        }
+        
+        .btn.success {
+            background: #28a745;
+        }
+        
+        .btn.danger {
+            background: #dc3545;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦕 DinoOverlay Test Environment</h1>
+            <p>Complete testing and debugging environment</p>
+        </div>
+        
+        <div class="status-panel">
+            <h2>🔍 System Status</h2>
+            <div id="status-container">
+                <div class="status-item info">
+                    <span>⏳ Initializing test environment...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-panel">
+            <h2>🎮 Test Controls</h2>
+            <div class="controls">
+                <button class="btn" onclick="runDiagnostics()">🔍 Run Diagnostics</button>
+                <button class="btn" onclick="testImageDetection()">🖼️ Test Image Detection</button>
+                <button class="btn" onclick="testAPIConnection()">🌐 Test API Connection</button>
+                <button class="btn" onclick="clearLogs()">🗑️ Clear Logs</button>
+                <button class="btn success" onclick="enableDinoOverlay()">✅ Enable DinoOverlay</button>
+                <button class="btn danger" onclick="disableDinoOverlay()">❌ Disable DinoOverlay</button>
+            </div>
+        </div>
+        
+        <div class="status-panel">
+            <h2>📊 Debug Console</h2>
+            <div id="debug-console" class="debug-console">
+                <div>🚀 DinoOverlay Test Environment Loaded</div>
+                <div>📅 Timestamp: <span id="timestamp"></span></div>
+                <div>🌐 API Endpoint: https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay</div>
+                <div>🔑 API Key: dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b</div>
+                <div>---</div>
+            </div>
+        </div>
+        
+        <div class="status-panel">
+            <h2>🖼️ Test Images Gallery</h2>
+            <p>These images will be automatically detected and made editable by DinoOverlay:</p>
+            
+            <div class="gallery">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop" 
+                         alt="Modern living room with fireplace" 
+                         class="test-image" />
+                    <div class="image-info">
+                        <div class="image-title">Modern Living Room</div>
+                        <div class="image-description">Should be auto-detected (contains "living room")</div>
+                    </div>
+                </div>
+                
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop" 
+                         alt="Spacious kitchen with island" 
+                         class="test-image" />
+                    <div class="image-info">
+                        <div class="image-title">Chef's Kitchen</div>
+                        <div class="image-description">Should be auto-detected (contains "kitchen")</div>
+                    </div>
+                </div>
+                
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop" 
+                         alt="Master bedroom suite" 
+                         class="test-image" />
+                    <div class="image-info">
+                        <div class="image-title">Master Bedroom</div>
+                        <div class="image-description">Should be auto-detected (contains "bedroom")</div>
+                    </div>
+                </div>
+                
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1574180045827-681f8a1a9622?w=400&h=300&fit=crop" 
+                         alt="Beautiful property exterior" 
+                         class="test-image" />
+                    <div class="image-info">
+                        <div class="image-title">Property Exterior</div>
+                        <div class="image-description">Should be auto-detected (contains "property")</div>
+                    </div>
+                </div>
+                
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop" 
+                         alt="Luxury bathroom with marble" 
+                         class="test-image" />
+                    <div class="image-info">
+                        <div class="image-title">Luxury Bathroom</div>
+                        <div class="image-description">Should be auto-detected (contains "bathroom")</div>
+                    </div>
+                </div>
+                
+                <div class="image-card">
+                    <img src="https://via.placeholder.com/100x50/333/fff?text=LOGO" 
+                         alt="Company logo" 
+                         class="test-image" />
+                    <div class="image-info">
+                        <div class="image-title">Company Logo</div>
+                        <div class="image-description">Should be IGNORED (contains "logo")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DinoOverlay Test Implementation -->
+    <script>
+    // Global variables
+    let dinoOverlayEnabled = false;
+    let detectedImages = new Set();
+    
+    // Configuration
+    window.DinoOverlayConfig = {
+        apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
+        apiEndpoint: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+        theme: 'auto',
+        enableAnalytics: false,
+        debug: true
+    };
+    
+    // Logging function
+    function log(message, type = 'info') {
+        const console = document.getElementById('debug-console');
+        const timestamp = new Date().toLocaleTimeString();
+        const div = document.createElement('div');
+        
+        let icon = '📝';
+        if (type === 'success') icon = '✅';
+        if (type === 'error') icon = '❌';
+        if (type === 'warning') icon = '⚠️';
+        if (type === 'info') icon = 'ℹ️';
+        
+        div.innerHTML = `[${timestamp}] ${icon} ${message}`;
+        console.appendChild(div);
+        console.scrollTop = console.scrollHeight;
+        
+        // Also log to browser console
+        console.log(`DinoOverlay: ${message}`);
+    }
+    
+    // Update status
+    function updateStatus(message, type = 'info') {
+        const container = document.getElementById('status-container');
+        const div = document.createElement('div');
+        div.className = `status-item ${type}`;
+        div.innerHTML = `<span>${message}</span>`;
+        container.appendChild(div);
+    }
+    
+    // Test functions
+    function runDiagnostics() {
+        log('🔍 Running system diagnostics...', 'info');
+        
+        // Check browser support
+        const hasLocalStorage = typeof(Storage) !== "undefined";
+        const hasFetch = typeof(fetch) !== "undefined";
+        const hasPromise = typeof(Promise) !== "undefined";
+        
+        log(`Browser Support - LocalStorage: ${hasLocalStorage}, Fetch: ${hasFetch}, Promise: ${hasPromise}`, 
+            hasLocalStorage && hasFetch && hasPromise ? 'success' : 'error');
+        
+        // Check images
+        const images = document.querySelectorAll('img');
+        log(`Found ${images.length} images on page`, 'info');
+        
+        // Check API endpoint
+        log(`API Endpoint: ${window.DinoOverlayConfig.apiEndpoint}`, 'info');
+        log(`API Key: ${window.DinoOverlayConfig.apiKey.substring(0, 20)}...`, 'info');
+        
+        updateStatus('✅ Diagnostics completed', 'success');
+    }
+    
+    function testImageDetection() {
+        log('🖼️ Testing image detection...', 'info');
+        
+        const images = document.querySelectorAll('img');
+        let detectedCount = 0;
+        
+        images.forEach((img, index) => {
+            const alt = (img.alt || '').toLowerCase();
+            const src = img.src.toLowerCase();
+            
+            // Real estate keywords
+            const realEstateKeywords = ['room', 'kitchen', 'bedroom', 'living', 'bathroom', 'property'];
+            const excludeKeywords = ['logo', 'icon', 'avatar'];
+            
+            const hasRealEstateKeyword = realEstateKeywords.some(keyword => 
+                alt.includes(keyword) || src.includes(keyword));
+            const hasExcludeKeyword = excludeKeywords.some(keyword => 
+                alt.includes(keyword) || src.includes(keyword));
+            
+            if (hasRealEstateKeyword && !hasExcludeKeyword && img.naturalWidth > 100) {
+                detectedCount++;
+                log(`✅ Image ${index + 1}: DETECTED - ${img.alt}`, 'success');
+            } else {
+                log(`❌ Image ${index + 1}: IGNORED - ${img.alt}`, 'warning');
+            }
+        });
+        
+        log(`Detection complete: ${detectedCount}/${images.length} images detected`, 'info');
+        updateStatus(`🖼️ Image detection: ${detectedCount}/${images.length} detected`, 'info');
+    }
+    
+    async function testAPIConnection() {
+        log('🌐 Testing API connection...', 'info');
+        
+        try {
+            const response = await fetch(`${window.DinoOverlayConfig.apiEndpoint}/edit-image`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': window.DinoOverlayConfig.apiKey
+                },
+                body: JSON.stringify({
+                    imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+                    prompt: 'test prompt'
+                })
+            });
+            
+            log(`API Response Status: ${response.status}`, response.ok ? 'success' : 'error');
+            
+            const result = await response.text();
+            log(`API Response: ${result.substring(0, 200)}...`, 'info');
+            
+            updateStatus(`🌐 API test: ${response.status} ${response.statusText}`, 
+                response.ok ? 'success' : 'error');
+            
+        } catch (error) {
+            log(`API Error: ${error.message}`, 'error');
+            updateStatus('🌐 API test: Connection failed', 'error');
+        }
+    }
+    
+    function clearLogs() {
+        document.getElementById('debug-console').innerHTML = `
+            <div>🚀 DinoOverlay Test Environment Loaded</div>
+            <div>📅 Timestamp: ${new Date().toLocaleString()}</div>
+            <div>🌐 API Endpoint: ${window.DinoOverlayConfig.apiEndpoint}</div>
+            <div>🔑 API Key: ${window.DinoOverlayConfig.apiKey.substring(0, 20)}...</div>
+            <div>---</div>
+        `;
+    }
+    
+    function enableDinoOverlay() {
+        if (dinoOverlayEnabled) {
+            log('DinoOverlay already enabled', 'warning');
+            return;
+        }
+        
+        log('🦕 Enabling DinoOverlay...', 'info');
+        dinoOverlayEnabled = true;
+        
+        const images = document.querySelectorAll('img');
+        let enabledCount = 0;
+        
+        images.forEach((img, index) => {
+            if (shouldMakeEditable(img)) {
+                makeImageEditable(img, index);
+                enabledCount++;
+            }
+        });
+        
+        log(`✅ DinoOverlay enabled on ${enabledCount} images`, 'success');
+        updateStatus('✅ DinoOverlay enabled', 'success');
+    }
+    
+    function disableDinoOverlay() {
+        log('🦕 Disabling DinoOverlay...', 'info');
+        dinoOverlayEnabled = false;
+        
+        detectedImages.forEach(img => {
+            img.style.cursor = 'default';
+            img.style.border = 'none';
+            img.style.transform = 'none';
+            img.style.boxShadow = 'none';
+            img.onclick = null;
+            img.onmouseenter = null;
+            img.onmouseleave = null;
+        });
+        
+        detectedImages.clear();
+        log('✅ DinoOverlay disabled', 'success');
+        updateStatus('❌ DinoOverlay disabled', 'info');
+    }
+    
+    function shouldMakeEditable(img) {
+        const alt = (img.alt || '').toLowerCase();
+        const src = img.src.toLowerCase();
+        
+        const realEstateKeywords = ['room', 'kitchen', 'bedroom', 'living', 'bathroom', 'property'];
+        const excludeKeywords = ['logo', 'icon', 'avatar'];
+        
+        const hasRealEstateKeyword = realEstateKeywords.some(keyword => 
+            alt.includes(keyword) || src.includes(keyword));
+        const hasExcludeKeyword = excludeKeywords.some(keyword => 
+            alt.includes(keyword) || src.includes(keyword));
+        
+        return hasRealEstateKeyword && !hasExcludeKeyword && img.naturalWidth > 100;
+    }
+    
+    function makeImageEditable(img, index) {
+        detectedImages.add(img);
+        
+        img.style.cursor = 'pointer';
+        img.style.transition = 'all 0.3s ease';
+        img.style.border = '2px solid transparent';
+        
+        img.onmouseenter = () => {
+            img.style.border = '2px solid #00ff00';
+            img.style.transform = 'scale(1.02)';
+            img.style.boxShadow = '0 4px 20px rgba(0,255,0,0.3)';
+        };
+        
+        img.onmouseleave = () => {
+            img.style.border = '2px solid transparent';
+            img.style.transform = 'scale(1)';
+            img.style.boxShadow = 'none';
+        };
+        
+        img.onclick = (e) => {
+            e.preventDefault();
+            showDinoOverlay(img);
+        };
+        
+        log(`🎯 Image ${index + 1} made editable: ${img.alt}`, 'success');
+    }
+    
+    function showDinoOverlay(img) {
+        log(`🎨 Opening DinoOverlay for: ${img.alt}`, 'info');
+        
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 999999;
+            display: flex; align-items: center; justify-content: center;
+        `;
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            background: white; border-radius: 16px; padding: 30px;
+            max-width: 600px; width: 90%; text-align: center; position: relative;
+        `;
+        
+        modal.innerHTML = `
+            <button onclick="this.closest('[style*=\"position: fixed\"]').remove()" 
+                    style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+            <h2>🦕 DinoOverlay AI Editor</h2>
+            <img src="${img.src}" style="width: 100%; max-width: 400px; height: auto; border-radius: 8px; margin: 20px 0;" />
+            <p><strong>Image:</strong> ${img.alt}</p>
+            <p><strong>Source:</strong> ${img.src.substring(0, 50)}...</p>
+            <div style="margin: 20px 0;">
+                <button onclick="testAIEdit('Add modern sofa')" style="margin: 5px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">✨ Add Modern Sofa</button>
+                <button onclick="testAIEdit('Scandinavian style')" style="margin: 5px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">🏠 Scandinavian Style</button>
+                <button onclick="testAIEdit('Better lighting')" style="margin: 5px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">💡 Better Lighting</button>
+            </div>
+            <div style="margin: 20px 0;">
+                <input type="text" placeholder="Custom prompt..." style="width: 70%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" id="custom-prompt" />
+                <button onclick="testAIEdit(document.getElementById('custom-prompt').value)" style="padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Send</button>
+            </div>
+            <p style="color: #666; font-size: 14px;"><em>Test environment - In production, this connects to your AI API</em></p>
+        `;
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        overlay.onclick = (e) => {
+            if (e.target === overlay) overlay.remove();
+        };
+    }
+    
+    function testAIEdit(prompt) {
+        if (!prompt) return;
+        log(`🤖 Testing AI edit with prompt: "${prompt}"`, 'info');
+        alert(`🤖 AI Edit Test\n\nPrompt: "${prompt}"\n\nIn production, this would:\n1. Send image + prompt to your API\n2. Process with Google Gemini + Imagen\n3. Return edited image\n4. Display result in overlay`);
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        log('🚀 Test environment initialized', 'success');
+        updateStatus('🚀 Test environment ready', 'success');
+        
+        // Auto-run diagnostics
+        setTimeout(runDiagnostics, 1000);
+    });
+    </script>
+</body>
+</html>

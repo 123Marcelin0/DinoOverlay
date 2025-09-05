@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple DinoOverlay Test</title>
+</head>
+<body>
+    <h1>DinoOverlay Test</h1>
+    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop" alt="living room" style="width: 300px; height: 200px;" />
+    
+    <!-- SIMPLE INLINE TEST -->
+    <script>
+    console.log('🧪 Simple test script starting...');
+    
+    // Test 1: Basic functionality
+    setTimeout(() => {
+        console.log('⏰ Running after 2 seconds...');
+        
+        const images = document.querySelectorAll('img');
+        console.log('📊 Found images:', images.length);
+        
+        images.forEach((img, i) => {
+            console.log(`Image ${i+1}:`, img.src);
+            img.style.border = '3px solid red';
+            img.style.cursor = 'pointer';
+            img.onclick = () => {
+                console.log('🖱️ Image clicked!');
+                alert('Image clicked! This proves the basic functionality works.');
+            };
+        });
+        
+        console.log('✅ Test setup complete');
+    }, 2000);
+    </script>
+</body>
+</html>

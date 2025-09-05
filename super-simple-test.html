@@ -1,0 +1,29 @@
+<!-- SUPER SIMPLE TEST -->
+<script>
+// This should definitely show up in console
+console.log('🔥 SUPER SIMPLE TEST STARTING');
+console.log('🔥 If you see this, the script is working!');
+
+// Wait 3 seconds then test
+setTimeout(() => {
+    console.log('🔥 Running after 3 seconds...');
+    
+    // Find all images
+    const images = document.querySelectorAll('img');
+    console.log('🔥 Found images:', images.length);
+    
+    // Make them all have red borders for testing
+    images.forEach((img, i) => {
+        console.log(`🔥 Processing image ${i+1}:`, img.src);
+        img.style.border = '5px solid red';
+        img.style.cursor = 'pointer';
+        
+        img.onclick = () => {
+            console.log('🔥 IMAGE CLICKED!');
+            alert('🔥 IMAGE CLICKED! DinoOverlay is working!');
+        };
+    });
+    
+    console.log('🔥 TEST COMPLETE - All images should have red borders');
+}, 3000);
+</script>
