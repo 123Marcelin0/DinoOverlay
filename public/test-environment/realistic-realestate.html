@@ -916,15 +916,17 @@
                 'living room', 'bathroom', 'interior', 'exterior', 'apartment', 
                 'condo', 'villa', 'mansion', 'cottage', 'cabin'
             ],
-            minImageSize: { width: 400, height: 300 } // Only activate on larger images
+            minImageSize: { width: 400, height: 300 }
         };
         
         let overlayManager = null;
+        let selectedImage = null;
+        let showSidebar = false;
+        let showChatBar = false;
         
         // DinoOverlay Manager Class
         class DinoOverlayManager {
             constructor() {
-                this.activeOverlay = null;
                 this.isProcessing = false;
             }
             
@@ -939,22 +941,16 @@
                     if (this.isLargeRealEstateImage(img)) {
                         detectedCount++;
                         
-                        // Add visual indicator for DinoOverlay
-                        img.style.border = '3px solid #667eea';
-                        img.style.borderRadius = '8px';
-                        img.title = '🦕 DinoOverlay: Click to edit this image';
+                        // Add editable-room class for DinoOverlay detection
+                        img.classList.add('editable-room');
                         img.style.cursor = 'pointer';
+                        img.title = '🦕 DinoOverlay: Click to edit this image';
+                        
+                        // Remove any existing click handlers to prevent duplicates
+                        img.removeEventListener('click', this.handleImageClick);
                         
                         // Add click handler for overlay
-                        img.addEventListener('click', (e) => {
-                            e.stopPropagation(); // Prevent modal close or image change
-                            this.showOverlay({
-                                element: img,
-                                id: `${modalId}-img-${index}`,
-                                src: img.src,
-                                alt: img.alt || ''
-                            });
-                        });
+                        img.addEventListener('click', this.handleImageClick);
                     }
                 });
                 
@@ -962,8 +958,40 @@
                 detectionInfo.innerHTML = `Thumbnails: Disabled<br>Large Images: ${detectedCount} detected`;
             }
             
+            handleImageClick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const target = e.target;
+                if (!target.classList.contains('editable-room')) return;
+                
+                // Clear any existing overlay first
+                clearSelection();
+                
+                // Set new selection
+                const rect = target.getBoundingClientRect();
+                selectedImage = { element: target, rect };
+                showSidebar = true;
+                
+                setTimeout(() => {
+                    showChatBar = true;
+                }, 300);
+                
+                // Add visual effects
+                const modalContent = document.querySelector('.modal-content');
+                if (modalContent) {
+                    modalContent.classList.add('blur-modal-content');
+                }
+                target.classList.add('selected-image');
+                
+                // Create overlay elements
+                createOverlayElements();
+                
+                log(`🎨 Opening DinoOverlay for: ${target.alt || 'Untitled'}`);
+            }
+            
             isLargeRealEstateImage(img) {
-                // Check if image is large enough (main images and thumbnails in detail view)
+                // Check if image is large enough
                 if (img.naturalWidth < CONFIG.minImageSize.width || 
                     img.naturalHeight < CONFIG.minImageSize.height) {
                     return false;
@@ -987,467 +1015,648 @@
                 );
             }
             
-            async showOverlay(imageData) {
-                if (this.isProcessing) return;
-                
-                log(`🎨 Opening DinoOverlay for: ${imageData.alt || 'Untitled'}`);
-                
-                // Add white border highlight to the image
-                imageData.element.style.border = '4px solid white';
-                imageData.element.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(102, 126, 234, 0.3)';
-                imageData.element.style.borderRadius = '12px';
-                
-                // Create overlay elements
-                this.createOverlayElements(imageData);
-                this.activeImageElement = imageData.element;
+        }
+        
+        // DinoOverlay Functions (based on the exact tsx implementation)
+        function createOverlayElements() {
+            // Add styles if not already added
+            if (!document.getElementById('dino-overlay-styles')) {
+                addOverlayStyles();
             }
             
-            createOverlayElements(imageData) {
-                // Add DinoOverlay styles if not already added
-                if (!document.getElementById('dino-overlay-styles')) {
-                    this.addOverlayStyles();
-                }
-                
-                // Create button group (Edit, Replace, Style)
-                this.createButtonGroup(imageData);
-                
-                // Create chat input
-                this.createChatInput(imageData);
-                
-                // Create quick actions sidebar
-                this.createQuickActionsSidebar(imageData);
-                
-                // Create close button
-                this.createCloseButton();
-            }
+            // Create backdrop
+            createBackdrop();
             
-            createButtonGroup(imageData) {
-                const buttonGroup = document.createElement('div');
-                buttonGroup.className = 'dino-button-group';
-                buttonGroup.innerHTML = `
-                    <button class="dino-main-btn dino-edit-btn" onclick="dinoOverlay.setMode('edit')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                        </svg>
-                        Edit
-                    </button>
-                    <button class="dino-main-btn dino-replace-btn" onclick="dinoOverlay.setMode('replace')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/>
-                        </svg>
-                        Replace
-                    </button>
-                    <button class="dino-main-btn dino-style-btn" onclick="dinoOverlay.setMode('style')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
-                        </svg>
-                        Style
-                    </button>
-                `;
-                
-                // Position button group above the image
-                const rect = imageData.element.getBoundingClientRect();
-                buttonGroup.style.position = 'fixed';
-                buttonGroup.style.top = (rect.top - 60) + 'px';
-                buttonGroup.style.left = (rect.left + (rect.width / 2) - 150) + 'px';
-                buttonGroup.style.zIndex = '10001';
-                
-                document.body.appendChild(buttonGroup);
-                this.buttonGroup = buttonGroup;
-            }
+            // Create white border highlight
+            createBorderHighlight();
             
-            createChatInput(imageData) {
-                const chatInput = document.createElement('div');
-                chatInput.className = 'dino-chat-input';
-                chatInput.innerHTML = `
-                    <div class="dino-chat-container">
-                        <input type="text" placeholder="Ask AI about room design..." class="dino-chat-field" id="dino-chat-field">
-                        <button class="dino-send-btn" onclick="dinoOverlay.sendChatMessage()">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                            </svg>
-                        </button>
-                    </div>
-                `;
-                
-                // Position chat input below the image
-                const rect = imageData.element.getBoundingClientRect();
-                chatInput.style.position = 'fixed';
-                chatInput.style.top = (rect.bottom + 20) + 'px';
-                chatInput.style.left = (rect.left + (rect.width / 2) - 200) + 'px';
-                chatInput.style.zIndex = '10001';
-                
-                document.body.appendChild(chatInput);
-                this.chatInput = chatInput;
-            }
+            // Create button group
+            createButtonGroup();
             
-            createQuickActionsSidebar(imageData) {
-                const sidebar = document.createElement('div');
-                sidebar.className = 'dino-quick-actions-sidebar';
-                sidebar.innerHTML = `
+            // Create sidebar
+            createSidebar();
+            
+            // Create chat bar
+            createChatBar();
+        }
+        
+        function createBackdrop() {
+            const backdrop = document.createElement('div');
+            backdrop.id = 'dino-backdrop';
+            backdrop.className = 'dino-backdrop';
+            document.body.appendChild(backdrop);
+        }
+        
+        function createBorderHighlight() {
+            if (!selectedImage) return;
+            
+            const highlight = document.createElement('div');
+            highlight.id = 'dino-border-highlight';
+            highlight.className = 'dino-border-highlight';
+            highlight.style.top = (selectedImage.rect.top - 8) + 'px';
+            highlight.style.left = (selectedImage.rect.left - 8) + 'px';
+            highlight.style.width = (selectedImage.rect.width + 16) + 'px';
+            highlight.style.height = (selectedImage.rect.height + 16) + 'px';
+            
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'dino-close-btn';
+            closeBtn.innerHTML = '×';
+            closeBtn.onclick = clearSelection;
+            highlight.appendChild(closeBtn);
+            
+            document.body.appendChild(highlight);
+        }
+        
+        function createButtonGroup() {
+            if (!selectedImage) return;
+            
+            const buttonGroup = document.createElement('div');
+            buttonGroup.id = 'dino-button-group';
+            buttonGroup.className = 'dino-button-group';
+            buttonGroup.style.top = (selectedImage.rect.top - 64) + 'px';
+            buttonGroup.style.left = (selectedImage.rect.left + selectedImage.rect.width / 2 - 120) + 'px';
+            
+            buttonGroup.innerHTML = `
+                <button class="dino-btn" onclick="setMode('edit')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    Edit
+                </button>
+                <button class="dino-btn" onclick="setMode('replace')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/>
+                    </svg>
+                    Replace
+                </button>
+                <button class="dino-btn" onclick="setMode('style')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                    Style
+                </button>
+            `;
+            
+            document.body.appendChild(buttonGroup);
+        }
+        
+        function createSidebar() {
+            if (!selectedImage) return;
+            
+            const sidebar = document.createElement('div');
+            sidebar.id = 'dino-sidebar';
+            sidebar.className = showSidebar ? 'dino-sidebar dino-sidebar-visible' : 'dino-sidebar';
+            sidebar.style.top = (selectedImage.rect.top + selectedImage.rect.height / 2) + 'px';
+            sidebar.style.left = (selectedImage.rect.right + 24) + 'px';
+            sidebar.style.transform = 'translateY(-50%)';
+            
+            sidebar.innerHTML = `
+                <div class="dino-sidebar-content">
                     <div class="dino-sidebar-header">
                         <h3>Quick Actions</h3>
-                        <button class="dino-sidebar-close" onclick="dinoOverlay.closeQuickActions()">×</button>
+                        <button class="dino-sidebar-close" onclick="clearSelection()">×</button>
                     </div>
-                    <div class="dino-sidebar-content">
-                        <div class="dino-style-options">
-                            <button class="dino-style-option" onclick="dinoOverlay.applyStyle('scandi')">
-                                <div class="dino-style-icon">🏠</div>
-                                <span>Scandi Style</span>
-                            </button>
-                            <button class="dino-style-option" onclick="dinoOverlay.applyStyle('minimalist')">
-                                <div class="dino-style-icon">✨</div>
-                                <span>Minimalist</span>
-                            </button>
-                            <button class="dino-style-option" onclick="dinoOverlay.applyStyle('sofa')">
-                                <div class="dino-style-icon">🛋️</div>
-                                <span>Add Sofa</span>
-                            </button>
-                            <button class="dino-style-option" onclick="dinoOverlay.applyStyle('modern')">
-                                <div class="dino-style-icon">🏢</div>
-                                <span>Modern</span>
-                            </button>
-                            <button class="dino-style-option" onclick="dinoOverlay.applyStyle('cozy')">
-                                <div class="dino-style-icon">🕯️</div>
-                                <span>Cozy</span>
-                            </button>
-                            <button class="dino-style-option" onclick="dinoOverlay.applyStyle('luxury')">
-                                <div class="dino-style-icon">💎</div>
-                                <span>Luxury</span>
-                            </button>
-                        </div>
-                        
-                        <div class="dino-ai-suggestions">
-                            <h4>AI Suggestions</h4>
-                            <p>Based on this room, we recommend adding warm lighting and modern furniture to enhance the space.</p>
-                        </div>
+                    <div class="dino-actions-grid">
+                        <button class="dino-action-btn" onclick="applyStyle('scandi')">
+                            <div class="dino-action-icon">🏠</div>
+                            <span>Scandi Style</span>
+                        </button>
+                        <button class="dino-action-btn" onclick="applyStyle('minimalist')">
+                            <div class="dino-action-icon">✨</div>
+                            <span>Minimalist</span>
+                        </button>
+                        <button class="dino-action-btn" onclick="applyStyle('sofa')">
+                            <div class="dino-action-icon">🛋️</div>
+                            <span>Add Sofa</span>
+                        </button>
+                        <button class="dino-action-btn" onclick="applyStyle('modern')">
+                            <div class="dino-action-icon">🏢</div>
+                            <span>Modern</span>
+                        </button>
+                        <button class="dino-action-btn" onclick="applyStyle('cozy')">
+                            <div class="dino-action-icon">🕯️</div>
+                            <span>Cozy</span>
+                        </button>
+                        <button class="dino-action-btn" onclick="applyStyle('luxury')">
+                            <div class="dino-action-icon">💎</div>
+                            <span>Luxury</span>
+                        </button>
                     </div>
-                `;
+                    <div class="dino-ai-suggestions">
+                        <h4>AI Suggestions</h4>
+                        <p>Based on this room, we recommend adding warm lighting and modern furniture to enhance the space.</p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(sidebar);
+        }
+        
+        function createChatBar() {
+            if (!selectedImage) return;
+            
+            const chatBar = document.createElement('div');
+            chatBar.id = 'dino-chat-bar';
+            chatBar.className = showChatBar ? 'dino-chat-bar dino-chat-bar-visible' : 'dino-chat-bar';
+            chatBar.style.top = (selectedImage.rect.bottom + 24) + 'px';
+            chatBar.style.left = (selectedImage.rect.left + selectedImage.rect.width / 2 - 192) + 'px';
+            
+            chatBar.innerHTML = `
+                <div class="dino-chat-content">
+                    <div class="dino-chat-indicator"></div>
+                    <input type="text" placeholder="Ask AI about room design..." class="dino-chat-input" id="dino-chat-input">
+                    <button class="dino-send-btn" onclick="sendChatMessage()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(chatBar);
+        }
+        
+        function clearSelection() {
+            showChatBar = false;
+            
+            setTimeout(() => {
+                selectedImage = null;
+                showSidebar = false;
                 
-                // Position sidebar to the right of the image
-                const rect = imageData.element.getBoundingClientRect();
-                sidebar.style.position = 'fixed';
-                sidebar.style.top = rect.top + 'px';
-                sidebar.style.left = (rect.right + 20) + 'px';
-                sidebar.style.zIndex = '10001';
-                sidebar.style.display = 'none'; // Initially hidden
+                // Remove all overlay elements
+                const elementsToRemove = [
+                    'dino-backdrop',
+                    'dino-border-highlight', 
+                    'dino-button-group',
+                    'dino-sidebar',
+                    'dino-chat-bar'
+                ];
                 
-                document.body.appendChild(sidebar);
-                this.quickActionsSidebar = sidebar;
+                elementsToRemove.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.remove();
+                    }
+                });
+                
+                // Remove visual effects
+                const modalContent = document.querySelector('.modal-content');
+                if (modalContent) {
+                    modalContent.classList.remove('blur-modal-content');
+                }
+                
+                const selectedImg = document.querySelector('.selected-image');
+                if (selectedImg) {
+                    selectedImg.classList.remove('selected-image');
+                }
+            }, 200);
+            
+            log('🔒 DinoOverlay closed');
+        }
+        
+        function setMode(mode) {
+            log(`🔧 DinoOverlay mode set to: ${mode}`);
+            
+            // Update button states
+            const buttons = document.querySelectorAll('.dino-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const clickedBtn = event.target.closest('.dino-btn');
+            if (clickedBtn) {
+                clickedBtn.classList.add('active');
+            }
+        }
+        
+        function applyStyle(styleName) {
+            const stylePrompts = {
+                scandi: 'Transform this room into a Scandinavian style with light woods, white walls, and minimalist furniture',
+                minimalist: 'Create a minimalist design with clean lines, neutral colors, and uncluttered space',
+                sofa: 'Add a modern, comfortable sofa that fits the room\'s style and color scheme',
+                modern: 'Apply modern interior design with contemporary furniture and sleek finishes',
+                cozy: 'Make this space cozy with warm lighting, soft textures, and comfortable seating',
+                luxury: 'Transform into a luxury space with high-end furniture, rich materials, and elegant details'
+            };
+            
+            const prompt = stylePrompts[styleName] || `Apply ${styleName} style to this room`;
+            log(`🎨 Applying style: ${styleName}`);
+            
+            processEdit(prompt);
+        }
+        
+        function sendChatMessage() {
+            const chatInput = document.getElementById('dino-chat-input');
+            const message = chatInput.value.trim();
+            
+            if (!message) return;
+            
+            log(`💬 Chat message: "${message}"`);
+            processChatMessage(message);
+            chatInput.value = '';
+        }
+        
+        async function processChatMessage(message) {
+            log(`🤖 Processing chat message: "${message}"`);
+            
+            try {
+                const response = await fetch(`${CONFIG.apiBaseUrl}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        imageUrl: selectedImage ? selectedImage.element.src : '',
+                        userId: 'realestate-chat-user'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    log('✅ Chat response received', 'success');
+                    alert(`🤖 AI Response:\n\n"${result.response || 'I can help you enhance this real estate image. Try asking about specific improvements like lighting, furniture, or styling.'}"`);
+                } else {
+                    throw new Error(`Chat API error: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Chat failed: ${error.message}`, 'error');
+                alert(`Chat failed: ${error.message}`);
+            }
+        }
+        
+        async function processEdit(prompt) {
+            if (!selectedImage) return;
+            
+            log(`🔄 Processing real estate edit: "${prompt}"`);
+            
+            try {
+                const response = await fetch(`${CONFIG.apiBaseUrl}/edit-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        imageUrl: selectedImage.element.src,
+                        prompt: prompt,
+                        userId: 'realestate-test-user'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    log('✅ Real estate image edit completed successfully', 'success');
+                    alert(`🎉 Edit completed successfully!\n\nPrompt: "${prompt}"\n\nIn a production environment, the edited image would replace the original.`);
+                } else {
+                    throw new Error(`API error: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Edit failed: ${error.message}`, 'error');
+                alert(`Edit failed: ${error.message}`);
             }
             
-            createCloseButton() {
-                const closeBtn = document.createElement('button');
-                closeBtn.className = 'dino-overlay-close';
-                closeBtn.innerHTML = '×';
-                closeBtn.onclick = () => this.closeOverlay();
+        function addOverlayStyles() {
+            const styles = document.createElement('style');
+            styles.id = 'dino-overlay-styles';
+            styles.textContent = `
+                /* Backdrop */
+                .dino-backdrop {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(4px);
+                    background: rgba(0, 0, 0, 0.1);
+                    z-index: 9998;
+                    pointer-events: none;
+                }
                 
-                closeBtn.style.position = 'fixed';
-                closeBtn.style.top = '20px';
-                closeBtn.style.right = '20px';
-                closeBtn.style.zIndex = '10002';
+                /* Border Highlight */
+                .dino-border-highlight {
+                    position: fixed;
+                    border: 2px solid rgba(255, 255, 255, 0.8);
+                    border-radius: 16px;
+                    box-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 255, 255, 0.4);
+                    z-index: 9999;
+                    pointer-events: none;
+                    transition: all 0.3s ease;
+                }
                 
-                document.body.appendChild(closeBtn);
-                this.closeButton = closeBtn;
-            }
-            
-            addOverlayStyles() {
-                const styles = document.createElement('style');
-                styles.id = 'dino-overlay-styles';
-                styles.textContent = `
-                    /* Button Group Styles */
+                .dino-close-btn {
+                    position: absolute;
+                    top: -8px;
+                    right: -8px;
+                    width: 24px;
+                    height: 24px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: none;
+                    border-radius: 50%;
+                    color: black;
+                    font-size: 16px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                    pointer-events: auto;
+                    z-index: 10000;
+                    transition: all 0.2s ease;
+                }
+                
+                .dino-close-btn:hover {
+                    background: white;
+                    transform: scale(1.1);
+                }
+                
+                /* Button Group */
+                .dino-button-group {
+                    position: fixed;
+                    display: flex;
+                    gap: 8px;
+                    background: rgba(255, 255, 255, 0.3);
+                    backdrop-filter: blur(12px);
+                    border: 1px solid rgba(255, 255, 255, 0.4);
+                    border-radius: 16px;
+                    padding: 8px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                    z-index: 9999;
+                    animation: slideInFromTop 0.5s ease-out;
+                }
+                
+                .dino-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    background: rgba(255, 255, 255, 0.7);
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: black;
+                    transition: all 0.3s ease;
+                    backdrop-filter: blur(8px);
+                }
+                
+                .dino-btn:hover {
+                    background: rgba(255, 255, 255, 0.9);
+                    transform: translateY(-1px);
+                }
+                
+                .dino-btn.active {
+                    background: rgba(102, 126, 234, 0.8);
+                    color: white;
+                }
+                
+                .dino-btn svg {
+                    width: 16px;
+                    height: 16px;
+                }
+                
+                /* Sidebar */
+                .dino-sidebar {
+                    position: fixed;
+                    width: 320px;
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 24px;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+                    z-index: 9999;
+                    opacity: 0;
+                    transform: translateX(100%);
+                    transition: all 0.5s ease-out;
+                    overflow: hidden;
+                }
+                
+                .dino-sidebar-visible {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                
+                .dino-sidebar-content {
+                    padding: 24px;
+                }
+                
+                .dino-sidebar-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                }
+                
+                .dino-sidebar-header h3 {
+                    margin: 0;
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: black;
+                }
+                
+                .dino-sidebar-close {
+                    background: none;
+                    border: none;
+                    font-size: 20px;
+                    cursor: pointer;
+                    color: black;
+                    padding: 4px;
+                    border-radius: 50%;
+                    transition: all 0.2s ease;
+                }
+                
+                .dino-sidebar-close:hover {
+                    background: rgba(255, 255, 255, 0.2);
+                }
+                
+                .dino-actions-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 12px;
+                    margin-bottom: 24px;
+                }
+                
+                .dino-action-btn {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 16px 12px;
+                    background: rgba(255, 255, 255, 0.7);
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    text-align: center;
+                    backdrop-filter: blur(8px);
+                }
+                
+                .dino-action-btn:hover {
+                    background: rgba(255, 255, 255, 0.9);
+                    transform: translateY(-2px) scale(1.05);
+                }
+                
+                .dino-action-icon {
+                    font-size: 20px;
+                }
+                
+                .dino-action-btn span {
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: black;
+                }
+                
+                .dino-ai-suggestions {
+                    background: rgba(248, 250, 255, 0.8);
+                    border: 1px solid rgba(224, 231, 255, 0.6);
+                    border-radius: 12px;
+                    padding: 16px;
+                    backdrop-filter: blur(8px);
+                }
+                
+                .dino-ai-suggestions h4 {
+                    margin: 0 0 8px 0;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: black;
+                }
+                
+                .dino-ai-suggestions p {
+                    margin: 0;
+                    font-size: 12px;
+                    color: rgba(0, 0, 0, 0.7);
+                    line-height: 1.4;
+                }
+                
+                /* Chat Bar */
+                .dino-chat-bar {
+                    position: fixed;
+                    width: 384px;
+                    height: 48px;
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 24px;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+                    z-index: 9999;
+                    opacity: 0;
+                    transform: translateY(100%);
+                    transition: all 0.7s ease-out;
+                }
+                
+                .dino-chat-bar-visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                
+                .dino-chat-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 0 24px;
+                    height: 100%;
+                }
+                
+                .dino-chat-indicator {
+                    width: 8px;
+                    height: 8px;
+                    background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+                    border-radius: 50%;
+                    animation: pulse 2s infinite;
+                }
+                
+                .dino-chat-input {
+                    flex: 1;
+                    background: transparent;
+                    border: none;
+                    outline: none;
+                    color: black;
+                    font-size: 14px;
+                }
+                
+                .dino-chat-input::placeholder {
+                    color: rgba(0, 0, 0, 0.6);
+                }
+                
+                .dino-send-btn {
+                    background: none;
+                    border: none;
+                    color: black;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 50%;
+                    transition: all 0.3s ease;
+                }
+                
+                .dino-send-btn:hover {
+                    background: rgba(255, 255, 255, 0.2);
+                }
+                
+                /* Image Effects */
+                .selected-image {
+                    position: relative !important;
+                    z-index: 9997 !important;
+                    filter: none !important;
+                    transform: scale(1.02) translateZ(0) !important;
+                    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.6), 0 0 50px rgba(255, 255, 255, 0.3) !important;
+                    border-radius: 16px !important;
+                    transition: all 0.3s ease !important;
+                }
+                
+                .blur-modal-content > *:not(.selected-image) {
+                    filter: blur(4px) !important;
+                    opacity: 0.6 !important;
+                    transition: all 0.3s ease !important;
+                }
+                
+                .blur-modal-content .selected-image {
+                    filter: none !important;
+                    opacity: 1 !important;
+                }
+                
+                /* Animations */
+                @keyframes slideInFromTop {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes pulse {
+                    0%, 100% {
+                        opacity: 1;
+                    }
+                    50% {
+                        opacity: 0.5;
+                    }
+                }
+                
+                /* Responsive Design */
+                @media (max-width: 768px) {
                     .dino-button-group {
-                        display: flex;
-                        gap: 8px;
-                        background: rgba(255, 255, 255, 0.95);
-                        backdrop-filter: blur(10px);
-                        border-radius: 12px;
-                        padding: 8px;
-                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                    }
-                    
-                    .dino-main-btn {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 12px 20px;
-                        background: white;
-                        border: 1px solid #e5e7eb;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: #374151;
-                        transition: all 0.2s ease;
-                        min-width: 90px;
-                        justify-content: center;
-                    }
-                    
-                    .dino-main-btn:hover {
-                        background: #f9fafb;
-                        border-color: #d1d5db;
-                        transform: translateY(-1px);
-                    }
-                    
-                    .dino-main-btn.active {
-                        background: #667eea;
-                        color: white;
-                        border-color: #667eea;
-                    }
-                    
-                    .dino-main-btn svg {
-                        width: 16px;
-                        height: 16px;
-                    }
-                    
-                    /* Chat Input Styles */
-                    .dino-chat-input {
-                        background: rgba(255, 255, 255, 0.95);
-                        backdrop-filter: blur(10px);
-                        border-radius: 25px;
-                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        overflow: hidden;
-                    }
-                    
-                    .dino-chat-container {
-                        display: flex;
-                        align-items: center;
-                        padding: 4px;
-                    }
-                    
-                    .dino-chat-field {
-                        flex: 1;
-                        border: none;
-                        outline: none;
-                        padding: 12px 20px;
-                        font-size: 14px;
-                        background: transparent;
-                        color: #374151;
-                        width: 360px;
-                    }
-                    
-                    .dino-chat-field::placeholder {
-                        color: #9ca3af;
-                    }
-                    
-                    .dino-send-btn {
-                        background: #667eea;
-                        border: none;
-                        border-radius: 50%;
-                        width: 40px;
-                        height: 40px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        cursor: pointer;
-                        color: white;
-                        transition: all 0.2s ease;
-                        margin-right: 4px;
-                    }
-                    
-                    .dino-send-btn:hover {
-                        background: #5a6fd8;
-                        transform: scale(1.05);
-                    }
-                    
-                    /* Quick Actions Sidebar */
-                    .dino-quick-actions-sidebar {
-                        background: rgba(255, 255, 255, 0.95);
-                        backdrop-filter: blur(10px);
-                        border-radius: 16px;
-                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        width: 280px;
-                        max-height: 500px;
-                        overflow: hidden;
-                    }
-                    
-                    .dino-sidebar-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        padding: 20px;
-                        border-bottom: 1px solid #f3f4f6;
-                        background: white;
-                    }
-                    
-                    .dino-sidebar-header h3 {
-                        margin: 0;
-                        font-size: 18px;
-                        font-weight: 600;
-                        color: #111827;
-                    }
-                    
-                    .dino-sidebar-close {
-                        background: none;
-                        border: none;
-                        font-size: 24px;
-                        cursor: pointer;
-                        color: #9ca3af;
-                        padding: 0;
-                        width: 32px;
-                        height: 32px;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        transition: all 0.2s ease;
-                    }
-                    
-                    .dino-sidebar-close:hover {
-                        background: #f3f4f6;
-                        color: #374151;
-                    }
-                    
-                    .dino-sidebar-content {
-                        padding: 20px;
-                        max-height: 400px;
-                        overflow-y: auto;
-                    }
-                    
-                    .dino-style-options {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        gap: 12px;
-                        margin-bottom: 24px;
-                    }
-                    
-                    .dino-style-option {
-                        display: flex;
                         flex-direction: column;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 16px 12px;
-                        background: white;
-                        border: 2px solid #f3f4f6;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                        text-align: center;
+                        width: 200px;
                     }
                     
-                    .dino-style-option:hover {
-                        border-color: #667eea;
-                        background: #f8faff;
-                        transform: translateY(-2px);
+                    .dino-sidebar {
+                        width: 280px;
+                        left: 10px !important;
                     }
                     
-                    .dino-style-icon {
-                        font-size: 24px;
-                        margin-bottom: 4px;
+                    .dino-chat-bar {
+                        width: 320px;
                     }
                     
-                    .dino-style-option span {
-                        font-size: 12px;
-                        font-weight: 500;
-                        color: #374151;
+                    .dino-actions-grid {
+                        grid-template-columns: 1fr;
                     }
-                    
-                    .dino-ai-suggestions {
-                        background: #f8faff;
-                        border: 1px solid #e0e7ff;
-                        border-radius: 12px;
-                        padding: 16px;
-                    }
-                    
-                    .dino-ai-suggestions h4 {
-                        margin: 0 0 8px 0;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #374151;
-                    }
-                    
-                    .dino-ai-suggestions p {
-                        margin: 0;
-                        font-size: 12px;
-                        color: #6b7280;
-                        line-height: 1.4;
-                    }
-                    
-                    /* Close Button */
-                    .dino-overlay-close {
-                        background: rgba(0, 0, 0, 0.5);
-                        border: none;
-                        color: white;
-                        font-size: 24px;
-                        cursor: pointer;
-                        padding: 0;
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        transition: all 0.2s ease;
-                        backdrop-filter: blur(10px);
-                    }
-                    
-                    .dino-overlay-close:hover {
-                        background: rgba(0, 0, 0, 0.7);
-                        transform: scale(1.1);
-                    }
-                    
-                    /* Processing Status */
-                    .dino-processing-status {
-                        position: fixed;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        background: rgba(255, 255, 255, 0.95);
-                        backdrop-filter: blur(10px);
-                        border-radius: 16px;
-                        padding: 24px 32px;
-                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        display: flex;
-                        align-items: center;
-                        gap: 16px;
-                        z-index: 10003;
-                    }
-                    
-                    .dino-spinner {
-                        width: 24px;
-                        height: 24px;
-                        border: 3px solid #f3f4f6;
-                        border-top: 3px solid #667eea;
-                        border-radius: 50%;
-                        animation: dino-spin 1s linear infinite;
-                    }
-                    
-                    @keyframes dino-spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                    
-                    /* Responsive Design */
-                    @media (max-width: 768px) {
-                        .dino-button-group {
-                            flex-direction: column;
-                            width: 200px;
-                        }
-                        
-                        .dino-chat-input {
-                            width: 300px;
-                        }
-                        
-                        .dino-chat-field {
-                            width: 240px;
-                        }
-                        
-                        .dino-quick-actions-sidebar {
-                            width: 250px;
-                            left: 10px !important;
-                        }
-                        
-                        .dino-style-options {
-                            grid-template-columns: 1fr;
-                        }
-                    }
-                `;
-                document.head.appendChild(styles);
-            }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
             
             closeOverlay() {
                 // Remove white border highlight
