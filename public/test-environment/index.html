@@ -264,6 +264,7 @@
         
         <div class="debug-controls">
             <button onclick="testAPI()">Test API</button>
+            <button onclick="checkAPIStatus()">Check Status</button>
             <button onclick="clearLogs()">Clear Logs</button>
             <button onclick="reloadOverlay()">Reload Overlay</button>
         </div>
@@ -320,7 +321,7 @@
         async function testAPI() {
             log('Testing API connection...', 'info');
             try {
-                const response = await fetch('https://dino-overlay-system.vercel.app/api/overlay/chat', {
+                const response = await fetch('https://dino-overlay-system.vercel.app/api/overlay/test', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -332,12 +333,31 @@
                 });
                 
                 if (response.ok) {
+                    const result = await response.json();
                     log('✅ API connection successful', 'success');
+                    log(`📊 API Response: ${result.message}`);
                 } else {
                     log(`❌ API error: ${response.status}`, 'error');
                 }
             } catch (error) {
                 log(`❌ API connection failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkAPIStatus() {
+            log('Checking API status...', 'info');
+            try {
+                const response = await fetch('https://dino-overlay-system.vercel.app/api/overlay/test');
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    log('✅ API Status: Online', 'success');
+                    log(`📋 Available endpoints: ${Object.keys(result.endpoints).join(', ')}`);
+                } else {
+                    log(`⚠️ API Status: ${response.status}`, 'warning');
+                }
+            } catch (error) {
+                log(`❌ API Status: Offline - ${error.message}`, 'error');
             }
         }
         
@@ -355,6 +375,7 @@
             // Configuration
             const CONFIG = {
                 apiBaseUrl: 'https://dino-overlay-system.vercel.app/api/overlay',
+                demoApiUrl: 'https://dino-overlay-system.vercel.app/api/overlay/edit-image-demo',
                 detectionKeywords: [
                     'house', 'home', 'property', 'real estate', 'kitchen', 'bedroom', 
                     'living room', 'bathroom', 'interior', 'exterior', 'apartment', 
@@ -720,7 +741,7 @@
                     log(`🔄 Processing edit: "${prompt}"`);
                     
                     try {
-                        const response = await fetch(`${CONFIG.apiBaseUrl}/edit-image`, {
+                        const response = await fetch(CONFIG.demoApiUrl, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -735,11 +756,17 @@
                         if (response.ok) {
                             const result = await response.json();
                             log('✅ Edit completed successfully', 'success');
+                            log(`📝 Edit result: ${result.message}`);
                             
-                            // Show result (in real implementation, this would update the image)
-                            alert(`Edit completed! In a real implementation, the image would be updated with the edited version.`);
+                            // Show result with demo information
+                            const message = result.demo ? 
+                                `Demo Edit Completed!\n\nPrompt: "${prompt}"\nProcessing Time: ${result.processingTime}ms\n\nNote: ${result.note}` :
+                                `Edit completed! The image has been processed with your request: "${prompt}"`;
+                            
+                            alert(message);
                         } else {
-                            throw new Error(`API error: ${response.status}`);
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || `API error: ${response.status}`);
                         }
                     } catch (error) {
                         log(`❌ Edit failed: ${error.message}`, 'error');

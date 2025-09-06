@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premier Properties - Real Estate Listings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-menu a:hover {
+            color: #3498db;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .listings-section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 3rem;
+        }
+        
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .property-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
+        .property-thumbnail {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .property-card:hover .property-thumbnail {
+            transform: scale(1.05);
+        }
+        
+        .property-info {
+            padding: 1.5rem;
+        }
+        
+        .property-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #27ae60;
+            margin-bottom: 0.5rem;
+        }
+        
+        .property-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .property-location {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .property-features {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        .property-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .debug-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 15px;
+            z-index: 10000;
+            max-height: 70vh;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        
+        .debug-panel h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .debug-log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        
+        .debug-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 3px 3px 3px 0;
+            font-size: 0.8rem;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+        .status-info { background: #17a2b8; }
+        
+        /* Property Detail Modal Styles */
+        .property-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .property-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: white;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 1100px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .property-modal.active .modal-content {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .property-gallery {
+            margin-bottom: 2rem;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+        
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+        
+        .thumbnail:hover {
+            border-color: #3498db;
+        }
+        
+        .thumbnail.active {
+            border-color: #667eea;
+        }
+        
+        .property-details {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .detail-section h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .detail-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .features-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .features-list li {
+            padding: 0.5rem 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .features-list li:before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .property-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 98%;
+                margin: 1%;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">🏠 Premier Properties</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#listings">Listings</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Find Your Dream Home</h1>
+            <p>Discover premium properties with our AI-powered image enhancement technology</p>
+        </div>
+    </section>
+
+    <section class="listings-section" id="listings">
+        <div class="container">
+            <h2 class="section-title">Featured Properties</h2>
+            
+            <div class="listings-grid">
+                <!-- Property 1 -->
+                <div class="property-card" onclick="openPropertyModal('property1')">
+                    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=250&fit=crop" 
+                         alt="Modern family home exterior" 
+                         class="property-thumbnail">
+                    <div class="property-info">
+                        <div class="property-price">$750,000</div>
+                        <div class="property-title">Modern Family Home</div>
+                        <div class="property-location">📍 Maple Street, Suburbia</div>
+                        <div class="property-features">
+                            <div class="feature">🛏️ 4 beds</div>
+                            <div class="feature">🚿 3 baths</div>
+                            <div class="feature">📐 2,400 sq ft</div>
+                        </div>
+                        <div class="property-description">
+                            Beautiful modern home with open floor plan, updated kitchen, and spacious backyard perfect for families.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 2 -->
+                <div class="property-card" onclick="openPropertyModal('property2')">
+                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=250&fit=crop" 
+                         alt="Luxury downtown condo interior" 
+                         class="property-thumbnail">
+                    <div class="property-info">
+                        <div class="property-price">$1,200,000</div>
+                        <div class="property-title">Luxury Downtown Condo</div>
+                        <div class="property-location">📍 City Center, Downtown</div>
+                        <div class="property-features">
+                            <div class="feature">🛏️ 3 beds</div>
+                            <div class="feature">🚿 2 baths</div>
+                            <div class="feature">📐 1,800 sq ft</div>
+                        </div>
+                        <div class="property-description">
+                            Stunning high-rise condo with panoramic city views, premium finishes, and building amenities.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 3 -->
+                <div class="property-card" onclick="openPropertyModal('property3')">
+                    <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=250&fit=crop" 
+                         alt="Charming suburban home kitchen" 
+                         class="property-thumbnail">
+                    <div class="property-info">
+                        <div class="property-price">$525,000</div>
+                        <div class="property-title">Charming Suburban Home</div>
+                        <div class="property-location">📍 Oak Avenue, Riverside</div>
+                        <div class="property-features">
+                            <div class="feature">🛏️ 3 beds</div>
+                            <div class="feature">🚿 2 baths</div>
+                            <div class="feature">📐 1,600 sq ft</div>
+                        </div>
+                        <div class="property-description">
+                            Cozy home with updated kitchen, hardwood floors, and quiet neighborhood setting.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 4 -->
+                <div class="property-card" onclick="openPropertyModal('property4')">
+                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=250&fit=crop" 
+                         alt="Contemporary villa living room" 
+                         class="property-thumbnail">
+                    <div class="property-info">
+                        <div class="property-price">$950,000</div>
+                        <div class="property-title">Contemporary Villa</div>
+                        <div class="property-location">📍 Hillside Drive, Westside</div>
+                        <div class="property-features">
+                            <div class="feature">🛏️ 5 beds</div>
+                            <div class="feature">🚿 4 baths</div>
+                            <div class="feature">📐 3,200 sq ft</div>
+                        </div>
+                        <div class="property-description">
+                            Elegant villa with designer interiors, pool, and breathtaking mountain views.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Debug Panel -->
+    <div class="debug-panel">
+        <h3>🔧 DinoOverlay Debug</h3>
+        
+        <div class="debug-controls">
+            <button onclick="testAPI()">Test API</button>
+            <button onclick="clearLogs()">Clear</button>
+        </div>
+        
+        <div>
+            <h4>Status:</h4>
+            <div id="status-display">
+                <span class="status-indicator status-info"></span>
+                <span>Ready</span>
+            </div>
+        </div>
+        
+        <div>
+            <h4>Log:</h4>
+            <div id="debug-log" class="debug-log">
+                System initialized...
+            </div>
+        </div>
+        
+        <div>
+            <h4>Detection:</h4>
+            <div id="detection-info">Thumbnails: Disabled<br>Large Images: Active</div>
+        </div>
+    </div>  
+  <!-- Property Detail Modals -->
+    
+    <!-- Property 1 Modal -->
+    <div id="property1-modal" class="property-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Modern Family Home - $750,000</h2>
+                <button class="modal-close" onclick="closePropertyModal('property1')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="property-gallery">
+                    <img id="property1-main" 
+                         src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=500&fit=crop" 
+                         alt="Modern family home exterior - main view" 
+                         class="main-image real-estate-large">
+                    
+                    <div class="thumbnail-grid">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=500&fit=crop" 
+                             alt="Modern family home exterior" 
+                             class="thumbnail active real-estate-large"
+                             onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop" 
+                             alt="Modern home living room interior" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=500&fit=crop" 
+                             alt="Modern kitchen with island" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop" 
+                             alt="Master bedroom suite" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&h=500&fit=crop" 
+                             alt="Modern bathroom with bathtub" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop" 
+                             alt="Backyard and patio area" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property1', this.src, this)">
+                    </div>
+                </div>
+                
+                <div class="property-details">
+                    <div class="detail-section">
+                        <h3>Property Description</h3>
+                        <p>This stunning modern family home offers the perfect blend of contemporary design and comfortable living. Located in the desirable Maple Street neighborhood, this 4-bedroom, 3-bathroom home features an open floor plan that seamlessly connects the living, dining, and kitchen areas.</p>
+                        
+                        <p>The gourmet kitchen boasts stainless steel appliances, granite countertops, and a large island perfect for entertaining. The master suite includes a walk-in closet and spa-like bathroom with dual vanities and a soaking tub.</p>
+                        
+                        <h3>Key Features</h3>
+                        <ul class="features-list">
+                            <li>Open floor plan design</li>
+                            <li>Gourmet kitchen with island</li>
+                            <li>Master suite with walk-in closet</li>
+                            <li>Hardwood floors throughout</li>
+                            <li>Two-car attached garage</li>
+                            <li>Landscaped backyard</li>
+                            <li>Energy-efficient appliances</li>
+                            <li>Central air conditioning</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Property Details</h3>
+                        <p><strong>Price:</strong> $750,000</p>
+                        <p><strong>Bedrooms:</strong> 4</p>
+                        <p><strong>Bathrooms:</strong> 3</p>
+                        <p><strong>Square Feet:</strong> 2,400</p>
+                        <p><strong>Lot Size:</strong> 0.25 acres</p>
+                        <p><strong>Year Built:</strong> 2018</p>
+                        <p><strong>Property Type:</strong> Single Family</p>
+                        <p><strong>Parking:</strong> 2-car garage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property 2 Modal -->
+    <div id="property2-modal" class="property-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Luxury Downtown Condo - $1,200,000</h2>
+                <button class="modal-close" onclick="closePropertyModal('property2')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="property-gallery">
+                    <img id="property2-main" 
+                         src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=500&fit=crop" 
+                         alt="Luxury condo living room with city view" 
+                         class="main-image real-estate-large">
+                    
+                    <div class="thumbnail-grid">
+                        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=500&fit=crop" 
+                             alt="Luxury condo living room" 
+                             class="thumbnail active real-estate-large"
+                             onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=500&fit=crop" 
+                             alt="Modern condo kitchen" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop" 
+                             alt="Condo master bedroom" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&h=500&fit=crop" 
+                             alt="Luxury bathroom with marble" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=500&fit=crop" 
+                             alt="City skyline view from balcony" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property2', this.src, this)">
+                    </div>
+                </div>
+                
+                <div class="property-details">
+                    <div class="detail-section">
+                        <h3>Property Description</h3>
+                        <p>Experience luxury living in this stunning downtown high-rise condominium. This sophisticated 3-bedroom, 2-bathroom unit offers breathtaking panoramic city views and premium finishes throughout.</p>
+                        
+                        <p>The open-concept living space features floor-to-ceiling windows, hardwood floors, and a gourmet kitchen with top-of-the-line appliances. Building amenities include a fitness center, rooftop terrace, and 24-hour concierge service.</p>
+                        
+                        <h3>Building Amenities</h3>
+                        <ul class="features-list">
+                            <li>24-hour concierge service</li>
+                            <li>Fitness center and spa</li>
+                            <li>Rooftop terrace with city views</li>
+                            <li>Indoor parking garage</li>
+                            <li>Business center</li>
+                            <li>Pet-friendly building</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Property Details</h3>
+                        <p><strong>Price:</strong> $1,200,000</p>
+                        <p><strong>Bedrooms:</strong> 3</p>
+                        <p><strong>Bathrooms:</strong> 2</p>
+                        <p><strong>Square Feet:</strong> 1,800</p>
+                        <p><strong>Floor:</strong> 25th</p>
+                        <p><strong>Year Built:</strong> 2020</p>
+                        <p><strong>Property Type:</strong> Condominium</p>
+                        <p><strong>HOA Fee:</strong> $850/month</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property 3 Modal -->
+    <div id="property3-modal" class="property-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Charming Suburban Home - $525,000</h2>
+                <button class="modal-close" onclick="closePropertyModal('property3')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="property-gallery">
+                    <img id="property3-main" 
+                         src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=500&fit=crop" 
+                         alt="Charming home kitchen with breakfast nook" 
+                         class="main-image real-estate-large">
+                    
+                    <div class="thumbnail-grid">
+                        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=500&fit=crop" 
+                             alt="Cozy kitchen with breakfast nook" 
+                             class="thumbnail active real-estate-large"
+                             onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=500&fit=crop" 
+                             alt="Suburban home exterior" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop" 
+                             alt="Comfortable living room" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop" 
+                             alt="Cozy bedroom" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=500&fit=crop" 
+                             alt="Backyard garden area" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property3', this.src, this)">
+                    </div>
+                </div>
+                
+                <div class="property-details">
+                    <div class="detail-section">
+                        <h3>Property Description</h3>
+                        <p>Discover the charm of suburban living in this delightful 3-bedroom, 2-bathroom home. Located on quiet Oak Avenue, this property offers a perfect blend of comfort and convenience for growing families.</p>
+                        
+                        <p>The heart of the home is the updated kitchen featuring granite countertops, stainless steel appliances, and a cozy breakfast nook. Beautiful hardwood floors flow throughout the main living areas, creating warmth and elegance.</p>
+                        
+                        <h3>Neighborhood Features</h3>
+                        <ul class="features-list">
+                            <li>Quiet residential street</li>
+                            <li>Top-rated school district</li>
+                            <li>Walking distance to parks</li>
+                            <li>Close to shopping centers</li>
+                            <li>Family-friendly community</li>
+                            <li>Public transportation access</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Property Details</h3>
+                        <p><strong>Price:</strong> $525,000</p>
+                        <p><strong>Bedrooms:</strong> 3</p>
+                        <p><strong>Bathrooms:</strong> 2</p>
+                        <p><strong>Square Feet:</strong> 1,600</p>
+                        <p><strong>Lot Size:</strong> 0.18 acres</p>
+                        <p><strong>Year Built:</strong> 1995</p>
+                        <p><strong>Property Type:</strong> Single Family</p>
+                        <p><strong>Parking:</strong> Driveway + Street</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property 4 Modal -->
+    <div id="property4-modal" class="property-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contemporary Villa - $950,000</h2>
+                <button class="modal-close" onclick="closePropertyModal('property4')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="property-gallery">
+                    <img id="property4-main" 
+                         src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop" 
+                         alt="Contemporary villa living room with mountain view" 
+                         class="main-image real-estate-large">
+                    
+                    <div class="thumbnail-grid">
+                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop" 
+                             alt="Elegant living room with mountain view" 
+                             class="thumbnail active real-estate-large"
+                             onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop" 
+                             alt="Villa exterior with pool" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=500&fit=crop" 
+                             alt="Gourmet kitchen with island" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop" 
+                             alt="Luxurious master suite" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&h=500&fit=crop" 
+                             alt="Spa-like master bathroom" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=500&fit=crop" 
+                             alt="Pool and outdoor entertainment area" 
+                             class="thumbnail real-estate-large"
+                             onclick="changeMainImage('property4', this.src, this)">
+                    </div>
+                </div>
+                
+                <div class="property-details">
+                    <div class="detail-section">
+                        <h3>Property Description</h3>
+                        <p>Indulge in luxury living at this magnificent contemporary villa nestled in the prestigious Hillside Drive community. This architectural masterpiece offers 5 bedrooms, 4 bathrooms, and breathtaking mountain views from every room.</p>
+                        
+                        <p>The villa features soaring ceilings, floor-to-ceiling windows, and premium finishes throughout. The resort-style backyard includes a sparkling pool, spa, and outdoor kitchen perfect for entertaining guests year-round.</p>
+                        
+                        <h3>Luxury Features</h3>
+                        <ul class="features-list">
+                            <li>Designer interior finishes</li>
+                            <li>Smart home automation</li>
+                            <li>Wine cellar and tasting room</li>
+                            <li>Home theater system</li>
+                            <li>Three-car garage</li>
+                            <li>Pool and spa</li>
+                            <li>Outdoor kitchen</li>
+                            <li>Mountain and valley views</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Property Details</h3>
+                        <p><strong>Price:</strong> $950,000</p>
+                        <p><strong>Bedrooms:</strong> 5</p>
+                        <p><strong>Bathrooms:</strong> 4</p>
+                        <p><strong>Square Feet:</strong> 3,200</p>
+                        <p><strong>Lot Size:</strong> 0.5 acres</p>
+                        <p><strong>Year Built:</strong> 2019</p>
+                        <p><strong>Property Type:</strong> Single Family Villa</p>
+                        <p><strong>Parking:</strong> 3-car garage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Property Modals and DinoOverlay Integration -->
+    <script>
+        // Debug logging system
+        const debugLog = document.getElementById('debug-log');
+        const statusDisplay = document.getElementById('status-display');
+        const detectionInfo = document.getElementById('detection-info');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            debugLog.textContent += logEntry;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            
+            // Update status indicator
+            const indicator = statusDisplay.querySelector('.status-indicator');
+            const statusText = statusDisplay.querySelector('span:last-child');
+            
+            indicator.className = `status-indicator status-${type}`;
+            statusText.textContent = message;
+            
+            console.log(`DinoOverlay: ${message}`);
+        }
+        
+        function clearLogs() {
+            debugLog.textContent = '';
+            log('Debug log cleared');
+        }
+        
+        async function testAPI() {
+            log('Testing API connection...', 'info');
+            try {
+                const response = await fetch('https://dino-overlay-system.vercel.app/api/overlay/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Test connection',
+                        imageUrl: 'test'
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ API connection successful', 'success');
+                } else {
+                    log(`❌ API error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ API connection failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Property Modal Functions
+        function openPropertyModal(propertyId) {
+            log(`📂 Opening property details: ${propertyId}`);
+            const modal = document.getElementById(`${propertyId}-modal`);
+            modal.classList.add('active');
+            
+            // Initialize DinoOverlay for large images in this modal
+            setTimeout(() => {
+                initializeModalOverlay(propertyId);
+            }, 300);
+        }
+        
+        function closePropertyModal(propertyId) {
+            log(`📂 Closing property details: ${propertyId}`);
+            const modal = document.getElementById(`${propertyId}-modal`);
+            modal.classList.remove('active');
+        }
+        
+        function changeMainImage(propertyId, newSrc, thumbnailElement) {
+            const mainImage = document.getElementById(`${propertyId}-main`);
+            mainImage.src = newSrc;
+            
+            // Update active thumbnail
+            const thumbnails = document.querySelectorAll(`#${propertyId}-modal .thumbnail`);
+            thumbnails.forEach(thumb => thumb.classList.remove('active'));
+            thumbnailElement.classList.add('active');
+            
+            log(`🖼️ Changed main image for ${propertyId}`);
+        }
+        
+        // DinoOverlay Configuration
+        const CONFIG = {
+            apiBaseUrl: 'https://dino-overlay-system.vercel.app/api/overlay',
+            detectionKeywords: [
+                'house', 'home', 'property', 'real estate', 'kitchen', 'bedroom', 
+                'living room', 'bathroom', 'interior', 'exterior', 'apartment', 
+                'condo', 'villa', 'mansion', 'cottage', 'cabin'
+            ],
+            minImageSize: { width: 400, height: 300 } // Only activate on larger images
+        };
+        
+        let overlayManager = null;
+        
+        // DinoOverlay Manager Class
+        class DinoOverlayManager {
+            constructor() {
+                this.activeOverlay = null;
+                this.isProcessing = false;
+            }
+            
+            initializeForModal(modalId) {
+                log(`🔍 Scanning for large images in ${modalId} modal`);
+                
+                const modal = document.getElementById(`${modalId}-modal`);
+                const largeImages = modal.querySelectorAll('.real-estate-large');
+                let detectedCount = 0;
+                
+                largeImages.forEach((img, index) => {
+                    if (this.isLargeRealEstateImage(img)) {
+                        detectedCount++;
+                        
+                        // Add visual indicator for DinoOverlay
+                        img.style.border = '3px solid #667eea';
+                        img.style.borderRadius = '8px';
+                        img.title = '🦕 DinoOverlay: Click to edit this image';
+                        img.style.cursor = 'pointer';
+                        
+                        // Add click handler for overlay
+                        img.addEventListener('click', (e) => {
+                            e.stopPropagation(); // Prevent modal close or image change
+                            this.showOverlay({
+                                element: img,
+                                id: `${modalId}-img-${index}`,
+                                src: img.src,
+                                alt: img.alt || ''
+                            });
+                        });
+                    }
+                });
+                
+                log(`✅ Detected ${detectedCount} large real estate images in ${modalId}`, 'success');
+                detectionInfo.innerHTML = `Thumbnails: Disabled<br>Large Images: ${detectedCount} detected`;
+            }
+            
+            isLargeRealEstateImage(img) {
+                // Check if image is large enough (main images and thumbnails in detail view)
+                if (img.naturalWidth < CONFIG.minImageSize.width || 
+                    img.naturalHeight < CONFIG.minImageSize.height) {
+                    return false;
+                }
+                
+                // Check if it has the real-estate-large class
+                if (!img.classList.contains('real-estate-large')) {
+                    return false;
+                }
+                
+                // Check alt text and context for real estate keywords
+                const altText = (img.alt || '').toLowerCase();
+                const className = (img.className || '').toLowerCase();
+                const parentText = img.parentElement ? 
+                    img.parentElement.textContent.toLowerCase() : '';
+                
+                const searchText = `${altText} ${className} ${parentText}`;
+                
+                return CONFIG.detectionKeywords.some(keyword => 
+                    searchText.includes(keyword)
+                );
+            }
+            
+            async showOverlay(imageData) {
+                if (this.isProcessing) return;
+                
+                log(`🎨 Opening DinoOverlay for: ${imageData.alt || 'Untitled'}`);
+                
+                // Create overlay
+                const overlay = this.createOverlay(imageData);
+                document.body.appendChild(overlay);
+                this.activeOverlay = overlay;
+                
+                // Animate in
+                requestAnimationFrame(() => {
+                    overlay.style.opacity = '1';
+                    overlay.querySelector('.dino-overlay-content').style.transform = 'scale(1)';
+                });
+            }
+            
+            createOverlay(imageData) {
+                const overlay = document.createElement('div');
+                overlay.className = 'dino-overlay-backdrop';
+                overlay.innerHTML = `
+                    <div class="dino-overlay-backdrop-bg" onclick="dinoOverlay.closeOverlay()"></div>
+                    <div class="dino-overlay-content">
+                        <div class="dino-overlay-header">
+                            <h3>🦕 DinoOverlay - AI Real Estate Image Editor</h3>
+                            <button class="dino-close-btn" onclick="dinoOverlay.closeOverlay()">×</button>
+                        </div>
+                        
+                        <div class="dino-overlay-body">
+                            <div class="dino-image-preview">
+                                <img src="${imageData.src}" alt="${imageData.alt}" />
+                            </div>
+                            
+                            <div class="dino-editing-panel">
+                                <div class="dino-quick-actions">
+                                    <h4>🚀 Quick Actions</h4>
+                                    <button onclick="dinoOverlay.applyEdit('brighten')" class="dino-action-btn">
+                                        ☀️ Brighten & Enhance
+                                    </button>
+                                    <button onclick="dinoOverlay.applyEdit('staging')" class="dino-action-btn">
+                                        🏠 Virtual Staging
+                                    </button>
+                                    <button onclick="dinoOverlay.applyEdit('declutter')" class="dino-action-btn">
+                                        🧹 Declutter Space
+                                    </button>
+                                    <button onclick="dinoOverlay.applyEdit('enhance')" class="dino-action-btn">
+                                        ✨ Professional Enhancement
+                                    </button>
+                                </div>
+                                
+                                <div class="dino-custom-prompt">
+                                    <h4>🎨 Custom Edit</h4>
+                                    <textarea id="dino-custom-prompt" placeholder="Describe your desired changes: 'Add modern furniture', 'Change wall color to white', 'Remove clutter and add plants'..."></textarea>
+                                    <button onclick="dinoOverlay.applyCustomEdit()" class="dino-action-btn dino-primary">
+                                        🎯 Apply Custom Edit
+                                    </button>
+                                </div>
+                                
+                                <div class="dino-processing-status" id="dino-processing-status" style="display: none;">
+                                    <div class="dino-spinner"></div>
+                                    <span>Processing your real estate image edit...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add DinoOverlay styles if not already added
+                if (!document.getElementById('dino-overlay-styles')) {
+                    this.addOverlayStyles();
+                }
+                
+                return overlay;
+            }
+            
+            addOverlayStyles() {
+                const styles = document.createElement('style');
+                styles.id = 'dino-overlay-styles';
+                styles.textContent = `
+                    .dino-overlay-backdrop {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 20000;
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+                    
+                    .dino-overlay-backdrop-bg {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.85);
+                    }
+                    
+                    .dino-overlay-content {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) scale(0.9);
+                        background: white;
+                        border-radius: 16px;
+                        width: 95%;
+                        max-width: 1100px;
+                        max-height: 90vh;
+                        overflow: hidden;
+                        transition: transform 0.3s ease;
+                        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+                    }
+                    
+                    .dino-overlay-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 20px 30px;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                    }
+                    
+                    .dino-overlay-header h3 {
+                        margin: 0;
+                        font-size: 1.4rem;
+                    }
+                    
+                    .dino-close-btn {
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 2rem;
+                        cursor: pointer;
+                        padding: 0;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: background 0.2s ease;
+                    }
+                    
+                    .dino-close-btn:hover {
+                        background: rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .dino-overlay-body {
+                        display: grid;
+                        grid-template-columns: 1.2fr 1fr;
+                        gap: 30px;
+                        padding: 30px;
+                        max-height: calc(90vh - 100px);
+                        overflow-y: auto;
+                    }
+                    
+                    .dino-image-preview img {
+                        width: 100%;
+                        height: auto;
+                        border-radius: 12px;
+                        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                    }
+                    
+                    .dino-editing-panel h4 {
+                        color: #333;
+                        margin-bottom: 15px;
+                        font-size: 1.1rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+                    
+                    .dino-quick-actions {
+                        margin-bottom: 30px;
+                    }
+                    
+                    .dino-action-btn {
+                        display: block;
+                        width: 100%;
+                        margin-bottom: 12px;
+                        padding: 14px 20px;
+                        background: #f8f9fa;
+                        border: 2px solid #e9ecef;
+                        border-radius: 10px;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        font-weight: 500;
+                        transition: all 0.2s ease;
+                        text-align: left;
+                    }
+                    
+                    .dino-action-btn:hover {
+                        background: #667eea;
+                        color: white;
+                        border-color: #667eea;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+                    }
+                    
+                    .dino-custom-prompt textarea {
+                        width: 100%;
+                        height: 120px;
+                        padding: 15px;
+                        border: 2px solid #e9ecef;
+                        border-radius: 10px;
+                        font-family: inherit;
+                        font-size: 1rem;
+                        resize: vertical;
+                        margin-bottom: 15px;
+                        line-height: 1.5;
+                    }
+                    
+                    .dino-custom-prompt textarea:focus {
+                        outline: none;
+                        border-color: #667eea;
+                        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                    }
+                    
+                    .dino-action-btn.dino-primary {
+                        background: #667eea;
+                        color: white;
+                        border-color: #667eea;
+                        font-weight: 600;
+                    }
+                    
+                    .dino-action-btn.dino-primary:hover {
+                        background: #5a6fd8;
+                        border-color: #5a6fd8;
+                    }
+                    
+                    .dino-processing-status {
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        padding: 20px;
+                        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                        border-radius: 10px;
+                        margin-top: 20px;
+                        border: 2px solid #667eea;
+                    }
+                    
+                    .dino-spinner {
+                        width: 28px;
+                        height: 28px;
+                        border: 3px solid #e9ecef;
+                        border-top: 3px solid #667eea;
+                        border-radius: 50%;
+                        animation: dino-spin 1s linear infinite;
+                    }
+                    
+                    @keyframes dino-spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    
+                    @media (max-width: 768px) {
+                        .dino-overlay-body {
+                            grid-template-columns: 1fr;
+                            gap: 20px;
+                        }
+                        
+                        .dino-overlay-content {
+                            width: 98%;
+                            margin: 1%;
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+            
+            closeOverlay() {
+                if (this.activeOverlay) {
+                    this.activeOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        if (this.activeOverlay && this.activeOverlay.parentNode) {
+                            this.activeOverlay.parentNode.removeChild(this.activeOverlay);
+                        }
+                        this.activeOverlay = null;
+                    }, 300);
+                }
+                log('🔒 DinoOverlay closed');
+            }
+            
+            async applyEdit(editType) {
+                const prompts = {
+                    brighten: 'Make this real estate image brighter, more vibrant, and professionally appealing for property listings',
+                    enhance: 'Enhance the overall quality, lighting, and visual appeal of this real estate photo to attract potential buyers',
+                    staging: 'Add virtual staging with modern, attractive furniture and decor to make this space look move-in ready',
+                    declutter: 'Remove clutter, personal items, and distractions to create a clean, spacious, and appealing real estate photo'
+                };
+                
+                await this.processEdit(prompts[editType] || editType);
+            }
+            
+            async applyCustomEdit() {
+                const prompt = document.getElementById('dino-custom-prompt').value.trim();
+                if (!prompt) {
+                    alert('Please describe the changes you\'d like to make to this real estate image');
+                    return;
+                }
+                
+                await this.processEdit(prompt);
+            }
+            
+            async processEdit(prompt) {
+                if (this.isProcessing) return;
+                
+                this.isProcessing = true;
+                const statusEl = document.getElementById('dino-processing-status');
+                statusEl.style.display = 'flex';
+                
+                log(`🔄 Processing real estate edit: "${prompt}"`);
+                
+                try {
+                    const response = await fetch(`${CONFIG.apiBaseUrl}/edit-image`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            imageUrl: this.getCurrentImageUrl(),
+                            prompt: prompt,
+                            userId: 'realestate-test-user'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        log('✅ Real estate image edit completed successfully', 'success');
+                        
+                        // In a real implementation, this would update the image
+                        alert(`🎉 Edit completed successfully!\n\nIn a production environment, the edited image would replace the original and be available for download or direct use in your real estate listings.`);
+                    } else {
+                        throw new Error(`API error: ${response.status}`);
+                    }
+                } catch (error) {
+                    log(`❌ Edit failed: ${error.message}`, 'error');
+                    alert(`Edit failed: ${error.message}\n\nPlease check your internet connection and try again.`);
+                } finally {
+                    this.isProcessing = false;
+                    statusEl.style.display = 'none';
+                }
+            }
+            
+            getCurrentImageUrl() {
+                const img = this.activeOverlay?.querySelector('.dino-image-preview img');
+                return img ? img.src : '';
+            }
+        }
+        
+        // Initialize DinoOverlay for modals
+        function initializeModalOverlay(modalId) {
+            if (!overlayManager) {
+                overlayManager = new DinoOverlayManager();
+                window.dinoOverlay = overlayManager;
+            }
+            
+            overlayManager.initializeForModal(modalId);
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('property-modal')) {
+                const modalId = e.target.id.replace('-modal', '');
+                closePropertyModal(modalId);
+            }
+        });
+        
+        // Initialize system
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Real Estate DinoOverlay system initialized');
+            log('📋 Click property cards to view details');
+            log('🎨 DinoOverlay activates on large images only');
+        });
+    </script>
+</body>
+</html>
