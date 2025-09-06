@@ -859,40 +859,24 @@
         window.testAPI = async function () {
             log('Testing API connection...', 'info');
             try {
-                // Try the deployed URL first, then fallback to localhost
-                const urls = [
-                    'https://dino-overlay-system.vercel.app/api/overlay/chat',
-                    'http://localhost:3000/api/overlay/chat'
-                ];
+                const response = await fetch(`${CONFIG.apiBaseUrl}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.apiKey}`
+                    },
+                    body: JSON.stringify({
+                        message: 'Test connection',
+                        imageUrl: 'test'
+                    })
+                });
                 
-                let lastError;
-                for (const url of urls) {
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                message: 'Test connection',
-                                imageUrl: 'test'
-                            })
-                        });
-                        
-                        if (response.ok) {
-                            log(`✅ API connection successful (${url})`, 'success');
-                            return;
-                        } else {
-                            log(`❌ API error from ${url}: ${response.status}`, 'warning');
-                            lastError = `HTTP ${response.status}`;
-                        }
-                    } catch (error) {
-                        log(`❌ Failed to connect to ${url}: ${error.message}`, 'warning');
-                        lastError = error.message;
-                    }
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ API connection successful: ${data.message || 'Connected'}`, 'success');
+                } else {
+                    log(`❌ API error: ${response.status} ${response.statusText}`, 'error');
                 }
-                
-                log(`❌ All API endpoints failed. Last error: ${lastError}`, 'error');
             } catch (error) {
                 log(`❌ API connection failed: ${error.message}`, 'error');
             }
@@ -930,7 +914,8 @@
 
         // DinoOverlay Configuration
         const CONFIG = {
-            apiBaseUrl: 'https://dino-overlay-system.vercel.app/api/overlay',
+            apiBaseUrl: 'https://dino-overlay-hzdzk7o4h-marces-projects-3950c474.vercel.app/api/overlay',
+            apiKey: 'dino_8d85697fca7bad3db26fb5ab9d5e76091606d0c64fb58c7433815a91561e958b',
             detectionKeywords: [
                 'house', 'home', 'property', 'real estate', 'kitchen', 'bedroom',
                 'living room', 'bathroom', 'interior', 'exterior', 'apartment',
@@ -1289,6 +1274,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.apiKey}`
                     },
                     body: JSON.stringify({
                         message: message,
@@ -1320,6 +1306,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.apiKey}`
                     },
                     body: JSON.stringify({
                         imageUrl: selectedImage.element.src,
