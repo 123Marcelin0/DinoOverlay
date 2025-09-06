@@ -172,9 +172,8 @@ export function DinoOverlay({ isDetailView = false }: DinoOverlayProps) {
 
       {selectedImage && (
         <div
-          className={`fixed z-[9999] transition-all duration-500 ease-out dino-overlay-element ${
-            showSidebar ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
-          }`}
+          className={`fixed z-[9999] transition-all duration-500 ease-out dino-overlay-element ${showSidebar ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+            }`}
           style={{
             top: selectedImage.rect.top + selectedImage.rect.height / 2,
             left: selectedImage.rect.right + 24,
@@ -227,9 +226,8 @@ export function DinoOverlay({ isDetailView = false }: DinoOverlayProps) {
       )}
 
       <div
-        className={`fixed z-[9999] dino-overlay-element transition-all duration-700 ease-out ${
-          showChatBar ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
-        }`}
+        className={`fixed z-[9999] dino-overlay-element transition-all duration-700 ease-out ${showChatBar ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+          }`}
         style={{
           top: selectedImage ? selectedImage.rect.bottom + 24 : "calc(100% - 72px - 24px)",
           left: selectedImage ? selectedImage.rect.left + selectedImage.rect.width / 2 - 192 : "50%",
