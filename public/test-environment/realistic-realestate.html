@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,22 +11,22 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f8f9fa;
             line-height: 1.6;
         }
-        
+
         .header {
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        
+
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -34,126 +35,126 @@
             align-items: center;
             padding: 0 2rem;
         }
-        
+
         .logo {
             font-size: 1.8rem;
             font-weight: 700;
             color: #2c3e50;
         }
-        
+
         .nav-menu {
             display: flex;
             list-style: none;
             gap: 2rem;
         }
-        
+
         .nav-menu a {
             text-decoration: none;
             color: #555;
             font-weight: 500;
             transition: color 0.3s ease;
         }
-        
+
         .nav-menu a:hover {
             color: #3498db;
         }
-        
+
         .hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 4rem 0;
             text-align: center;
         }
-        
+
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
         }
-        
+
         .hero p {
             font-size: 1.2rem;
             opacity: 0.9;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
         }
-        
+
         .listings-section {
             padding: 4rem 0;
         }
-        
+
         .section-title {
             text-align: center;
             font-size: 2.5rem;
             color: #2c3e50;
             margin-bottom: 3rem;
         }
-        
+
         .listings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
         }
-        
+
         .property-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
         }
-        
+
         .property-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         }
-        
+
         .property-thumbnail {
             width: 100%;
             height: 250px;
             object-fit: cover;
             transition: transform 0.3s ease;
         }
-        
+
         .property-card:hover .property-thumbnail {
             transform: scale(1.05);
         }
-        
+
         .property-info {
             padding: 1.5rem;
         }
-        
+
         .property-price {
             font-size: 1.8rem;
             font-weight: 700;
             color: #27ae60;
             margin-bottom: 0.5rem;
         }
-        
+
         .property-title {
             font-size: 1.3rem;
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 0.5rem;
         }
-        
+
         .property-location {
             color: #7f8c8d;
             margin-bottom: 1rem;
             font-size: 0.95rem;
         }
-        
+
         .property-features {
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .feature {
             display: flex;
             align-items: center;
@@ -161,13 +162,13 @@
             color: #555;
             font-size: 0.9rem;
         }
-        
+
         .property-description {
             color: #666;
             font-size: 0.9rem;
             line-height: 1.5;
         }
-        
+
         .debug-panel {
             position: fixed;
             top: 20px;
@@ -175,20 +176,20 @@
             width: 280px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             padding: 15px;
             z-index: 10000;
             max-height: 70vh;
             overflow-y: auto;
             font-size: 0.85rem;
         }
-        
+
         .debug-panel h3 {
             color: #333;
             margin-bottom: 10px;
             font-size: 1rem;
         }
-        
+
         .debug-log {
             background: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -200,7 +201,7 @@
             overflow-y: auto;
             margin-bottom: 10px;
         }
-        
+
         .debug-controls button {
             background: #667eea;
             color: white;
@@ -211,7 +212,7 @@
             margin: 3px 3px 3px 0;
             font-size: 0.8rem;
         }
-        
+
         .status-indicator {
             display: inline-block;
             width: 10px;
@@ -219,12 +220,23 @@
             border-radius: 50%;
             margin-right: 6px;
         }
-        
-        .status-success { background: #28a745; }
-        .status-error { background: #dc3545; }
-        .status-warning { background: #ffc107; }
-        .status-info { background: #17a2b8; }
-        
+
+        .status-success {
+            background: #28a745;
+        }
+
+        .status-error {
+            background: #dc3545;
+        }
+
+        .status-warning {
+            background: #ffc107;
+        }
+
+        .status-info {
+            background: #17a2b8;
+        }
+
         /* Property Detail Modal Styles */
         .property-modal {
             position: fixed;
@@ -238,12 +250,12 @@
             visibility: hidden;
             transition: all 0.3s ease;
         }
-        
+
         .property-modal.active {
             opacity: 1;
             visibility: visible;
         }
-        
+
         .modal-content {
             position: absolute;
             top: 50%;
@@ -257,11 +269,11 @@
             overflow-y: auto;
             transition: transform 0.3s ease;
         }
-        
+
         .property-modal.active .modal-content {
             transform: translate(-50%, -50%) scale(1);
         }
-        
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -269,7 +281,7 @@
             padding: 1.5rem 2rem;
             border-bottom: 1px solid #eee;
         }
-        
+
         .modal-close {
             background: none;
             border: none;
@@ -284,20 +296,20 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .modal-close:hover {
             background: #f5f5f5;
             color: #333;
         }
-        
+
         .modal-body {
             padding: 2rem;
         }
-        
+
         .property-gallery {
             margin-bottom: 2rem;
         }
-        
+
         .main-image {
             width: 100%;
             height: 400px;
@@ -306,13 +318,13 @@
             margin-bottom: 1rem;
             cursor: pointer;
         }
-        
+
         .thumbnail-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 0.5rem;
         }
-        
+
         .thumbnail {
             width: 100%;
             height: 80px;
@@ -322,40 +334,40 @@
             border: 2px solid transparent;
             transition: border-color 0.2s ease;
         }
-        
+
         .thumbnail:hover {
             border-color: #3498db;
         }
-        
+
         .thumbnail.active {
             border-color: #667eea;
         }
-        
+
         .property-details {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 2rem;
         }
-        
+
         .detail-section h3 {
             color: #2c3e50;
             margin-bottom: 1rem;
             font-size: 1.3rem;
         }
-        
+
         .detail-section p {
             color: #666;
             line-height: 1.6;
             margin-bottom: 1rem;
         }
-        
+
         .features-list {
             list-style: none;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 0.5rem;
         }
-        
+
         .features-list li {
             padding: 0.5rem 0;
             color: #555;
@@ -363,29 +375,30 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .features-list li:before {
             content: "✓";
             color: #27ae60;
             font-weight: bold;
         }
-        
+
         @media (max-width: 768px) {
             .property-details {
                 grid-template-columns: 1fr;
             }
-            
+
             .modal-content {
                 width: 98%;
                 margin: 1%;
             }
-            
+
             .modal-body {
                 padding: 1rem;
             }
         }
     </style>
 </head>
+
 <body>
     <header class="header">
         <div class="nav-container">
@@ -410,13 +423,12 @@
     <section class="listings-section" id="listings">
         <div class="container">
             <h2 class="section-title">Featured Properties</h2>
-            
+
             <div class="listings-grid">
                 <!-- Property 1 -->
                 <div class="property-card" onclick="openPropertyModal('property1')">
-                    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=250&fit=crop" 
-                         alt="Modern family home exterior" 
-                         class="property-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=250&fit=crop"
+                        alt="Modern family home exterior" class="property-thumbnail">
                     <div class="property-info">
                         <div class="property-price">$750,000</div>
                         <div class="property-title">Modern Family Home</div>
@@ -427,16 +439,16 @@
                             <div class="feature">📐 2,400 sq ft</div>
                         </div>
                         <div class="property-description">
-                            Beautiful modern home with open floor plan, updated kitchen, and spacious backyard perfect for families.
+                            Beautiful modern home with open floor plan, updated kitchen, and spacious backyard perfect
+                            for families.
                         </div>
                     </div>
                 </div>
 
                 <!-- Property 2 -->
                 <div class="property-card" onclick="openPropertyModal('property2')">
-                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=250&fit=crop" 
-                         alt="Luxury downtown condo interior" 
-                         class="property-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=250&fit=crop"
+                        alt="Luxury downtown condo interior" class="property-thumbnail">
                     <div class="property-info">
                         <div class="property-price">$1,200,000</div>
                         <div class="property-title">Luxury Downtown Condo</div>
@@ -447,16 +459,16 @@
                             <div class="feature">📐 1,800 sq ft</div>
                         </div>
                         <div class="property-description">
-                            Stunning high-rise condo with panoramic city views, premium finishes, and building amenities.
+                            Stunning high-rise condo with panoramic city views, premium finishes, and building
+                            amenities.
                         </div>
                     </div>
                 </div>
 
                 <!-- Property 3 -->
                 <div class="property-card" onclick="openPropertyModal('property3')">
-                    <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=250&fit=crop" 
-                         alt="Charming suburban home kitchen" 
-                         class="property-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=250&fit=crop"
+                        alt="Charming suburban home kitchen" class="property-thumbnail">
                     <div class="property-info">
                         <div class="property-price">$525,000</div>
                         <div class="property-title">Charming Suburban Home</div>
@@ -474,9 +486,8 @@
 
                 <!-- Property 4 -->
                 <div class="property-card" onclick="openPropertyModal('property4')">
-                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=250&fit=crop" 
-                         alt="Contemporary villa living room" 
-                         class="property-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=250&fit=crop"
+                        alt="Contemporary villa living room" class="property-thumbnail">
                     <div class="property-info">
                         <div class="property-price">$950,000</div>
                         <div class="property-title">Contemporary Villa</div>
@@ -498,12 +509,12 @@
     <!-- Debug Panel -->
     <div class="debug-panel">
         <h3>🔧 DinoOverlay Debug</h3>
-        
+
         <div class="debug-controls">
             <button onclick="testAPI()">Test API</button>
             <button onclick="clearLogs()">Clear</button>
         </div>
-        
+
         <div>
             <h4>Status:</h4>
             <div id="status-display">
@@ -511,21 +522,21 @@
                 <span>Ready</span>
             </div>
         </div>
-        
+
         <div>
             <h4>Log:</h4>
             <div id="debug-log" class="debug-log">
                 System initialized...
             </div>
         </div>
-        
+
         <div>
             <h4>Detection:</h4>
             <div id="detection-info">Thumbnails: Disabled<br>Large Images: Active</div>
         </div>
-    </div>  
-  <!-- Property Detail Modals -->
-    
+    </div>
+    <!-- Property Detail Modals -->
+
     <!-- Property 1 Modal -->
     <div id="property1-modal" class="property-modal">
         <div class="modal-content">
@@ -535,46 +546,44 @@
             </div>
             <div class="modal-body">
                 <div class="property-gallery">
-                    <img id="property1-main" 
-                         src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=500&fit=crop" 
-                         alt="Modern family home exterior - main view" 
-                         class="main-image real-estate-large">
-                    
+                    <img id="property1-main"
+                        src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=500&fit=crop"
+                        alt="Modern family home exterior - main view" class="main-image real-estate-large">
+
                     <div class="thumbnail-grid">
-                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=500&fit=crop" 
-                             alt="Modern family home exterior" 
-                             class="thumbnail active real-estate-large"
-                             onclick="changeMainImage('property1', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop" 
-                             alt="Modern home living room interior" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property1', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=500&fit=crop" 
-                             alt="Modern kitchen with island" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property1', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop" 
-                             alt="Master bedroom suite" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property1', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&h=500&fit=crop" 
-                             alt="Modern bathroom with bathtub" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property1', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop" 
-                             alt="Backyard and patio area" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=500&fit=crop"
+                            alt="Modern family home exterior" class="thumbnail active real-estate-large"
+                            onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop"
+                            alt="Modern home living room interior" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=500&fit=crop"
+                            alt="Modern kitchen with island" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop"
+                            alt="Master bedroom suite" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&h=500&fit=crop"
+                            alt="Modern bathroom with bathtub" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property1', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop"
+                            alt="Backyard and patio area" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property1', this.src, this)">
                     </div>
                 </div>
-                
+
                 <div class="property-details">
                     <div class="detail-section">
                         <h3>Property Description</h3>
-                        <p>This stunning modern family home offers the perfect blend of contemporary design and comfortable living. Located in the desirable Maple Street neighborhood, this 4-bedroom, 3-bathroom home features an open floor plan that seamlessly connects the living, dining, and kitchen areas.</p>
-                        
-                        <p>The gourmet kitchen boasts stainless steel appliances, granite countertops, and a large island perfect for entertaining. The master suite includes a walk-in closet and spa-like bathroom with dual vanities and a soaking tub.</p>
-                        
+                        <p>This stunning modern family home offers the perfect blend of contemporary design and
+                            comfortable living. Located in the desirable Maple Street neighborhood, this 4-bedroom,
+                            3-bathroom home features an open floor plan that seamlessly connects the living, dining, and
+                            kitchen areas.</p>
+
+                        <p>The gourmet kitchen boasts stainless steel appliances, granite countertops, and a large
+                            island perfect for entertaining. The master suite includes a walk-in closet and spa-like
+                            bathroom with dual vanities and a soaking tub.</p>
+
                         <h3>Key Features</h3>
                         <ul class="features-list">
                             <li>Open floor plan design</li>
@@ -587,7 +596,7 @@
                             <li>Central air conditioning</li>
                         </ul>
                     </div>
-                    
+
                     <div class="detail-section">
                         <h3>Property Details</h3>
                         <p><strong>Price:</strong> $750,000</p>
@@ -613,42 +622,40 @@
             </div>
             <div class="modal-body">
                 <div class="property-gallery">
-                    <img id="property2-main" 
-                         src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=500&fit=crop" 
-                         alt="Luxury condo living room with city view" 
-                         class="main-image real-estate-large">
-                    
+                    <img id="property2-main"
+                        src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=500&fit=crop"
+                        alt="Luxury condo living room with city view" class="main-image real-estate-large">
+
                     <div class="thumbnail-grid">
-                        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=500&fit=crop" 
-                             alt="Luxury condo living room" 
-                             class="thumbnail active real-estate-large"
-                             onclick="changeMainImage('property2', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=500&fit=crop" 
-                             alt="Modern condo kitchen" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property2', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop" 
-                             alt="Condo master bedroom" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property2', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&h=500&fit=crop" 
-                             alt="Luxury bathroom with marble" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property2', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=500&fit=crop" 
-                             alt="City skyline view from balcony" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=500&fit=crop"
+                            alt="Luxury condo living room" class="thumbnail active real-estate-large"
+                            onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=500&fit=crop"
+                            alt="Modern condo kitchen" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop"
+                            alt="Condo master bedroom" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&h=500&fit=crop"
+                            alt="Luxury bathroom with marble" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property2', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=500&fit=crop"
+                            alt="City skyline view from balcony" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property2', this.src, this)">
                     </div>
                 </div>
-                
+
                 <div class="property-details">
                     <div class="detail-section">
                         <h3>Property Description</h3>
-                        <p>Experience luxury living in this stunning downtown high-rise condominium. This sophisticated 3-bedroom, 2-bathroom unit offers breathtaking panoramic city views and premium finishes throughout.</p>
-                        
-                        <p>The open-concept living space features floor-to-ceiling windows, hardwood floors, and a gourmet kitchen with top-of-the-line appliances. Building amenities include a fitness center, rooftop terrace, and 24-hour concierge service.</p>
-                        
+                        <p>Experience luxury living in this stunning downtown high-rise condominium. This sophisticated
+                            3-bedroom, 2-bathroom unit offers breathtaking panoramic city views and premium finishes
+                            throughout.</p>
+
+                        <p>The open-concept living space features floor-to-ceiling windows, hardwood floors, and a
+                            gourmet kitchen with top-of-the-line appliances. Building amenities include a fitness
+                            center, rooftop terrace, and 24-hour concierge service.</p>
+
                         <h3>Building Amenities</h3>
                         <ul class="features-list">
                             <li>24-hour concierge service</li>
@@ -659,7 +666,7 @@
                             <li>Pet-friendly building</li>
                         </ul>
                     </div>
-                    
+
                     <div class="detail-section">
                         <h3>Property Details</h3>
                         <p><strong>Price:</strong> $1,200,000</p>
@@ -685,42 +692,40 @@
             </div>
             <div class="modal-body">
                 <div class="property-gallery">
-                    <img id="property3-main" 
-                         src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=500&fit=crop" 
-                         alt="Charming home kitchen with breakfast nook" 
-                         class="main-image real-estate-large">
-                    
+                    <img id="property3-main"
+                        src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=500&fit=crop"
+                        alt="Charming home kitchen with breakfast nook" class="main-image real-estate-large">
+
                     <div class="thumbnail-grid">
-                        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=500&fit=crop" 
-                             alt="Cozy kitchen with breakfast nook" 
-                             class="thumbnail active real-estate-large"
-                             onclick="changeMainImage('property3', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=500&fit=crop" 
-                             alt="Suburban home exterior" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property3', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop" 
-                             alt="Comfortable living room" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property3', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop" 
-                             alt="Cozy bedroom" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property3', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=500&fit=crop" 
-                             alt="Backyard garden area" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=500&fit=crop"
+                            alt="Cozy kitchen with breakfast nook" class="thumbnail active real-estate-large"
+                            onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=500&fit=crop"
+                            alt="Suburban home exterior" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=500&fit=crop"
+                            alt="Comfortable living room" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop"
+                            alt="Cozy bedroom" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property3', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=500&fit=crop"
+                            alt="Backyard garden area" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property3', this.src, this)">
                     </div>
                 </div>
-                
+
                 <div class="property-details">
                     <div class="detail-section">
                         <h3>Property Description</h3>
-                        <p>Discover the charm of suburban living in this delightful 3-bedroom, 2-bathroom home. Located on quiet Oak Avenue, this property offers a perfect blend of comfort and convenience for growing families.</p>
-                        
-                        <p>The heart of the home is the updated kitchen featuring granite countertops, stainless steel appliances, and a cozy breakfast nook. Beautiful hardwood floors flow throughout the main living areas, creating warmth and elegance.</p>
-                        
+                        <p>Discover the charm of suburban living in this delightful 3-bedroom, 2-bathroom home. Located
+                            on quiet Oak Avenue, this property offers a perfect blend of comfort and convenience for
+                            growing families.</p>
+
+                        <p>The heart of the home is the updated kitchen featuring granite countertops, stainless steel
+                            appliances, and a cozy breakfast nook. Beautiful hardwood floors flow throughout the main
+                            living areas, creating warmth and elegance.</p>
+
                         <h3>Neighborhood Features</h3>
                         <ul class="features-list">
                             <li>Quiet residential street</li>
@@ -731,7 +736,7 @@
                             <li>Public transportation access</li>
                         </ul>
                     </div>
-                    
+
                     <div class="detail-section">
                         <h3>Property Details</h3>
                         <p><strong>Price:</strong> $525,000</p>
@@ -757,46 +762,43 @@
             </div>
             <div class="modal-body">
                 <div class="property-gallery">
-                    <img id="property4-main" 
-                         src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop" 
-                         alt="Contemporary villa living room with mountain view" 
-                         class="main-image real-estate-large">
-                    
+                    <img id="property4-main"
+                        src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop"
+                        alt="Contemporary villa living room with mountain view" class="main-image real-estate-large">
+
                     <div class="thumbnail-grid">
-                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop" 
-                             alt="Elegant living room with mountain view" 
-                             class="thumbnail active real-estate-large"
-                             onclick="changeMainImage('property4', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop" 
-                             alt="Villa exterior with pool" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property4', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=500&fit=crop" 
-                             alt="Gourmet kitchen with island" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property4', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop" 
-                             alt="Luxurious master suite" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property4', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&h=500&fit=crop" 
-                             alt="Spa-like master bathroom" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property4', this.src, this)">
-                        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=500&fit=crop" 
-                             alt="Pool and outdoor entertainment area" 
-                             class="thumbnail real-estate-large"
-                             onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop"
+                            alt="Elegant living room with mountain view" class="thumbnail active real-estate-large"
+                            onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop"
+                            alt="Villa exterior with pool" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=500&fit=crop"
+                            alt="Gourmet kitchen with island" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1571508601891-ca5e7a713859?w=800&h=500&fit=crop"
+                            alt="Luxurious master suite" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&h=500&fit=crop"
+                            alt="Spa-like master bathroom" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property4', this.src, this)">
+                        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=500&fit=crop"
+                            alt="Pool and outdoor entertainment area" class="thumbnail real-estate-large"
+                            onclick="changeMainImage('property4', this.src, this)">
                     </div>
                 </div>
-                
+
                 <div class="property-details">
                     <div class="detail-section">
                         <h3>Property Description</h3>
-                        <p>Indulge in luxury living at this magnificent contemporary villa nestled in the prestigious Hillside Drive community. This architectural masterpiece offers 5 bedrooms, 4 bathrooms, and breathtaking mountain views from every room.</p>
-                        
-                        <p>The villa features soaring ceilings, floor-to-ceiling windows, and premium finishes throughout. The resort-style backyard includes a sparkling pool, spa, and outdoor kitchen perfect for entertaining guests year-round.</p>
-                        
+                        <p>Indulge in luxury living at this magnificent contemporary villa nestled in the prestigious
+                            Hillside Drive community. This architectural masterpiece offers 5 bedrooms, 4 bathrooms, and
+                            breathtaking mountain views from every room.</p>
+
+                        <p>The villa features soaring ceilings, floor-to-ceiling windows, and premium finishes
+                            throughout. The resort-style backyard includes a sparkling pool, spa, and outdoor kitchen
+                            perfect for entertaining guests year-round.</p>
+
                         <h3>Luxury Features</h3>
                         <ul class="features-list">
                             <li>Designer interior finishes</li>
@@ -809,7 +811,7 @@
                             <li>Mountain and valley views</li>
                         </ul>
                     </div>
-                    
+
                     <div class="detail-section">
                         <h3>Property Details</h3>
                         <p><strong>Price:</strong> $950,000</p>
@@ -832,223 +834,248 @@
         const debugLog = document.getElementById('debug-log');
         const statusDisplay = document.getElementById('status-display');
         const detectionInfo = document.getElementById('detection-info');
-        
+
         function log(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
             const logEntry = `[${timestamp}] ${message}\n`;
             debugLog.textContent += logEntry;
             debugLog.scrollTop = debugLog.scrollHeight;
-            
+
             // Update status indicator
             const indicator = statusDisplay.querySelector('.status-indicator');
             const statusText = statusDisplay.querySelector('span:last-child');
-            
+
             indicator.className = `status-indicator status-${type}`;
             statusText.textContent = message;
-            
+
             console.log(`DinoOverlay: ${message}`);
         }
-        
-        window.clearLogs = function() {
+
+        window.clearLogs = function () {
             debugLog.textContent = '';
             log('Debug log cleared');
         }
-        
-        window.testAPI = async function() {
+
+        window.testAPI = async function () {
             log('Testing API connection...', 'info');
             try {
-                const response = await fetch('https://dino-overlay-system.vercel.app/api/overlay/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: 'Test connection',
-                        imageUrl: 'test'
-                    })
-                });
+                // Try the deployed URL first, then fallback to localhost
+                const urls = [
+                    'https://dino-overlay-system.vercel.app/api/overlay/chat',
+                    'http://localhost:3000/api/overlay/chat'
+                ];
                 
-                if (response.ok) {
-                    log('✅ API connection successful', 'success');
-                } else {
-                    log(`❌ API error: ${response.status}`, 'error');
+                let lastError;
+                for (const url of urls) {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                message: 'Test connection',
+                                imageUrl: 'test'
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            log(`✅ API connection successful (${url})`, 'success');
+                            return;
+                        } else {
+                            log(`❌ API error from ${url}: ${response.status}`, 'warning');
+                            lastError = `HTTP ${response.status}`;
+                        }
+                    } catch (error) {
+                        log(`❌ Failed to connect to ${url}: ${error.message}`, 'warning');
+                        lastError = error.message;
+                    }
                 }
+                
+                log(`❌ All API endpoints failed. Last error: ${lastError}`, 'error');
             } catch (error) {
                 log(`❌ API connection failed: ${error.message}`, 'error');
             }
         }
-        
+
         // Property Modal Functions (make globally accessible)
-        window.openPropertyModal = function(propertyId) {
+        window.openPropertyModal = function (propertyId) {
             log(`📂 Opening property details: ${propertyId}`);
             const modal = document.getElementById(`${propertyId}-modal`);
             modal.classList.add('active');
-            
+
             // Initialize DinoOverlay for large images in this modal
             setTimeout(() => {
                 initializeModalOverlay(propertyId);
             }, 300);
         }
-        
-        window.closePropertyModal = function(propertyId) {
+
+        window.closePropertyModal = function (propertyId) {
             log(`📂 Closing property details: ${propertyId}`);
             const modal = document.getElementById(`${propertyId}-modal`);
             modal.classList.remove('active');
         }
-        
-        window.changeMainImage = function(propertyId, newSrc, thumbnailElement) {
+
+        window.changeMainImage = function (propertyId, newSrc, thumbnailElement) {
             const mainImage = document.getElementById(`${propertyId}-main`);
             mainImage.src = newSrc;
-            
+
             // Update active thumbnail
             const thumbnails = document.querySelectorAll(`#${propertyId}-modal .thumbnail`);
             thumbnails.forEach(thumb => thumb.classList.remove('active'));
             thumbnailElement.classList.add('active');
-            
+
             log(`🖼️ Changed main image for ${propertyId}`);
         }
-        
+
         // DinoOverlay Configuration
         const CONFIG = {
             apiBaseUrl: 'https://dino-overlay-system.vercel.app/api/overlay',
             detectionKeywords: [
-                'house', 'home', 'property', 'real estate', 'kitchen', 'bedroom', 
-                'living room', 'bathroom', 'interior', 'exterior', 'apartment', 
+                'house', 'home', 'property', 'real estate', 'kitchen', 'bedroom',
+                'living room', 'bathroom', 'interior', 'exterior', 'apartment',
                 'condo', 'villa', 'mansion', 'cottage', 'cabin'
             ],
             minImageSize: { width: 400, height: 300 }
         };
-        
+
         let overlayManager = null;
         let selectedImage = null;
         let showSidebar = false;
         let showChatBar = false;
-        
+
         // DinoOverlay Manager Class
         class DinoOverlayManager {
             constructor() {
                 this.isProcessing = false;
             }
-            
+
             initializeForModal(modalId) {
                 log(`🔍 Scanning for large images in ${modalId} modal`);
-                
+
                 const modal = document.getElementById(`${modalId}-modal`);
                 const largeImages = modal.querySelectorAll('.real-estate-large');
                 let detectedCount = 0;
-                
+
                 largeImages.forEach((img, index) => {
                     if (this.isLargeRealEstateImage(img)) {
                         detectedCount++;
-                        
+
                         // Add editable-room class for DinoOverlay detection
                         img.classList.add('editable-room');
                         img.style.cursor = 'pointer';
                         img.title = '🦕 DinoOverlay: Click to edit this image';
-                        
+
                         // Remove any existing click handlers to prevent duplicates
                         img.removeEventListener('click', this.handleImageClick);
-                        
+
                         // Add click handler for overlay
                         img.addEventListener('click', this.handleImageClick);
                     }
                 });
-                
+
                 log(`✅ Detected ${detectedCount} large real estate images in ${modalId}`, 'success');
                 detectionInfo.innerHTML = `Thumbnails: Disabled<br>Large Images: ${detectedCount} detected`;
             }
-            
+
             handleImageClick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const target = e.target;
                 if (!target.classList.contains('editable-room')) return;
-                
-                // Clear any existing overlay first
-                clearSelection();
-                
-                // Set new selection
-                const rect = target.getBoundingClientRect();
-                selectedImage = { element: target, rect };
-                showSidebar = true;
-                
-                setTimeout(() => {
-                    showChatBar = true;
-                }, 300);
-                
-                // Add visual effects
-                const modalContent = document.querySelector('.modal-content');
-                if (modalContent) {
-                    modalContent.classList.add('blur-modal-content');
+
+                // If clicking the same image, don't recreate overlay
+                if (selectedImage && selectedImage.element === target) {
+                    return;
                 }
-                target.classList.add('selected-image');
-                
-                // Create overlay elements
-                createOverlayElements();
-                
-                log(`🎨 Opening DinoOverlay for: ${target.alt || 'Untitled'}`);
+
+                // Clear any existing overlay first
+                if (selectedImage) {
+                    clearSelection();
+                }
+
+                // Wait a bit before creating new overlay to avoid conflicts
+                setTimeout(() => {
+                    // Set new selection
+                    const rect = target.getBoundingClientRect();
+                    selectedImage = { element: target, rect };
+                    showSidebar = true;
+                    showChatBar = true; // Show chat bar immediately
+
+                    // Add visual effects
+                    const modalContent = document.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.classList.add('blur-modal-content');
+                    }
+                    target.classList.add('selected-image');
+
+                    // Create overlay elements
+                    createOverlayElements();
+
+                    log(`🎨 Opening DinoOverlay for: ${target.alt || 'Untitled'}`);
+                }, selectedImage ? 250 : 0); // Delay only if there was a previous selection
             }
-            
+
             isLargeRealEstateImage(img) {
                 // Check if image is large enough
-                if (img.naturalWidth < CONFIG.minImageSize.width || 
+                if (img.naturalWidth < CONFIG.minImageSize.width ||
                     img.naturalHeight < CONFIG.minImageSize.height) {
                     return false;
                 }
-                
+
                 // Check if it has the real-estate-large class
                 if (!img.classList.contains('real-estate-large')) {
                     return false;
                 }
-                
+
                 // Check alt text and context for real estate keywords
                 const altText = (img.alt || '').toLowerCase();
                 const className = (img.className || '').toLowerCase();
-                const parentText = img.parentElement ? 
+                const parentText = img.parentElement ?
                     img.parentElement.textContent.toLowerCase() : '';
-                
+
                 const searchText = `${altText} ${className} ${parentText}`;
-                
-                return CONFIG.detectionKeywords.some(keyword => 
+
+                return CONFIG.detectionKeywords.some(keyword =>
                     searchText.includes(keyword)
                 );
             }
         }
-        
+
         // DinoOverlay Functions (based on the exact tsx implementation)
         function createOverlayElements() {
             // Add styles if not already added
             if (!document.getElementById('dino-overlay-styles')) {
                 addOverlayStyles();
             }
-            
+
             // Create backdrop
             createBackdrop();
-            
+
             // Create white border highlight
             createBorderHighlight();
-            
+
             // Create button group
             createButtonGroup();
-            
+
             // Create sidebar
             createSidebar();
-            
+
             // Create chat bar
             createChatBar();
         }
-        
+
         function createBackdrop() {
             const backdrop = document.createElement('div');
             backdrop.id = 'dino-backdrop';
             backdrop.className = 'dino-backdrop';
             document.body.appendChild(backdrop);
         }
-        
+
         function createBorderHighlight() {
             if (!selectedImage) return;
-            
+
             const highlight = document.createElement('div');
             highlight.id = 'dino-border-highlight';
             highlight.className = 'dino-border-highlight';
@@ -1056,26 +1083,26 @@
             highlight.style.left = (selectedImage.rect.left - 8) + 'px';
             highlight.style.width = (selectedImage.rect.width + 16) + 'px';
             highlight.style.height = (selectedImage.rect.height + 16) + 'px';
-            
+
             // Add close button
             const closeBtn = document.createElement('button');
             closeBtn.className = 'dino-close-btn';
             closeBtn.innerHTML = '×';
             closeBtn.onclick = clearSelection;
             highlight.appendChild(closeBtn);
-            
+
             document.body.appendChild(highlight);
         }
-        
+
         function createButtonGroup() {
             if (!selectedImage) return;
-            
+
             const buttonGroup = document.createElement('div');
             buttonGroup.id = 'dino-button-group';
             buttonGroup.className = 'dino-button-group';
             buttonGroup.style.top = (selectedImage.rect.top - 64) + 'px';
             buttonGroup.style.left = (selectedImage.rect.left + selectedImage.rect.width / 2 - 120) + 'px';
-            
+
             buttonGroup.innerHTML = `
                 <button class="dino-btn" onclick="setMode('edit')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -1096,20 +1123,20 @@
                     Style
                 </button>
             `;
-            
+
             document.body.appendChild(buttonGroup);
         }
-        
+
         function createSidebar() {
             if (!selectedImage) return;
-            
+
             const sidebar = document.createElement('div');
             sidebar.id = 'dino-sidebar';
             sidebar.className = showSidebar ? 'dino-sidebar dino-sidebar-visible' : 'dino-sidebar';
             sidebar.style.top = (selectedImage.rect.top + selectedImage.rect.height / 2) + 'px';
             sidebar.style.left = (selectedImage.rect.right + 24) + 'px';
             sidebar.style.transform = 'translateY(-50%)';
-            
+
             sidebar.innerHTML = `
                 <div class="dino-sidebar-content">
                     <div class="dino-sidebar-header">
@@ -1148,19 +1175,19 @@
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(sidebar);
         }
-        
+
         function createChatBar() {
             if (!selectedImage) return;
-            
+
             const chatBar = document.createElement('div');
             chatBar.id = 'dino-chat-bar';
             chatBar.className = showChatBar ? 'dino-chat-bar dino-chat-bar-visible' : 'dino-chat-bar';
             chatBar.style.top = (selectedImage.rect.bottom + 24) + 'px';
             chatBar.style.left = (selectedImage.rect.left + selectedImage.rect.width / 2 - 192) + 'px';
-            
+
             chatBar.innerHTML = `
                 <div class="dino-chat-content">
                     <div class="dino-chat-indicator"></div>
@@ -1172,62 +1199,62 @@
                     </button>
                 </div>
             `;
-            
+
             document.body.appendChild(chatBar);
         }
-        
-        window.clearSelection = function() {
+
+        window.clearSelection = function () {
             showChatBar = false;
-            
+
             setTimeout(() => {
                 selectedImage = null;
                 showSidebar = false;
-                
+
                 // Remove all overlay elements
                 const elementsToRemove = [
                     'dino-backdrop',
-                    'dino-border-highlight', 
+                    'dino-border-highlight',
                     'dino-button-group',
                     'dino-sidebar',
                     'dino-chat-bar'
                 ];
-                
+
                 elementsToRemove.forEach(id => {
                     const element = document.getElementById(id);
                     if (element) {
                         element.remove();
                     }
                 });
-                
+
                 // Remove visual effects
                 const modalContent = document.querySelector('.modal-content');
                 if (modalContent) {
                     modalContent.classList.remove('blur-modal-content');
                 }
-                
+
                 const selectedImg = document.querySelector('.selected-image');
                 if (selectedImg) {
                     selectedImg.classList.remove('selected-image');
                 }
             }, 200);
-            
+
             log('🔒 DinoOverlay closed');
         }
-        
-        window.setMode = function(mode) {
+
+        window.setMode = function (mode) {
             log(`🔧 DinoOverlay mode set to: ${mode}`);
-            
+
             // Update button states
             const buttons = document.querySelectorAll('.dino-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            
+
             const clickedBtn = event.target.closest('.dino-btn');
             if (clickedBtn) {
                 clickedBtn.classList.add('active');
             }
         }
-        
-        window.applyStyle = function(styleName) {
+
+        window.applyStyle = function (styleName) {
             const stylePrompts = {
                 scandi: 'Transform this room into a Scandinavian style with light woods, white walls, and minimalist furniture',
                 minimalist: 'Create a minimalist design with clean lines, neutral colors, and uncluttered space',
@@ -1236,27 +1263,27 @@
                 cozy: 'Make this space cozy with warm lighting, soft textures, and comfortable seating',
                 luxury: 'Transform into a luxury space with high-end furniture, rich materials, and elegant details'
             };
-            
+
             const prompt = stylePrompts[styleName] || `Apply ${styleName} style to this room`;
             log(`🎨 Applying style: ${styleName}`);
-            
+
             processEdit(prompt);
         }
-        
-        window.sendChatMessage = function() {
+
+        window.sendChatMessage = function () {
             const chatInput = document.getElementById('dino-chat-input');
             const message = chatInput.value.trim();
-            
+
             if (!message) return;
-            
+
             log(`💬 Chat message: "${message}"`);
             processChatMessage(message);
             chatInput.value = '';
         }
-        
+
         async function processChatMessage(message) {
             log(`🤖 Processing chat message: "${message}"`);
-            
+
             try {
                 const response = await fetch(`${CONFIG.apiBaseUrl}/chat`, {
                     method: 'POST',
@@ -1269,7 +1296,7 @@
                         userId: 'realestate-chat-user'
                     })
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     log('✅ Chat response received', 'success');
@@ -1282,12 +1309,12 @@
                 alert(`Chat failed: ${error.message}`);
             }
         }
-        
+
         async function processEdit(prompt) {
             if (!selectedImage) return;
-            
+
             log(`🔄 Processing real estate edit: "${prompt}"`);
-            
+
             try {
                 const response = await fetch(`${CONFIG.apiBaseUrl}/edit-image`, {
                     method: 'POST',
@@ -1300,7 +1327,7 @@
                         userId: 'realestate-test-user'
                     })
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     log('✅ Real estate image edit completed successfully', 'success');
@@ -1313,7 +1340,7 @@
                 alert(`Edit failed: ${error.message}`);
             }
         }
-        
+
         function addOverlayStyles() {
             const styles = document.createElement('style');
             styles.id = 'dino-overlay-styles';
@@ -1657,31 +1684,32 @@
             `;
             document.head.appendChild(styles);
         }
-        
+
         // Initialize DinoOverlay for modals
         function initializeModalOverlay(modalId) {
             if (!overlayManager) {
                 overlayManager = new DinoOverlayManager();
                 window.dinoOverlay = overlayManager;
             }
-            
+
             overlayManager.initializeForModal(modalId);
         }
-        
+
         // Close modal when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.classList.contains('property-modal')) {
                 const modalId = e.target.id.replace('-modal', '');
                 closePropertyModal(modalId);
             }
         });
-        
+
         // Initialize system
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             log('🚀 Real Estate DinoOverlay system initialized');
             log('📋 Click property cards to view details');
             log('🎨 DinoOverlay activates on large images only');
         });
     </script>
 </body>
+
 </html>

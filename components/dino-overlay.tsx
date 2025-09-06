@@ -63,7 +63,7 @@ export function DinoOverlay({ isDetailView = false }: DinoOverlayProps) {
     images.forEach((img) => {
       img.addEventListener("click", handleImageClick)
       if (isDetailView) {
-        img.style.cursor = "pointer"
+        (img as HTMLElement).style.cursor = "pointer"
       }
     })
 
