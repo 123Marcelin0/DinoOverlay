@@ -863,7 +863,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${CONFIG.apiKey}`
+                        'x-api-key': CONFIG.apiKey
                     },
                     body: JSON.stringify({
                         message: 'Test connection',
@@ -1274,7 +1274,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${CONFIG.apiKey}`
+                        'x-api-key': CONFIG.apiKey
                     },
                     body: JSON.stringify({
                         message: message,
@@ -1306,7 +1306,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${CONFIG.apiKey}`
+                        'x-api-key': CONFIG.apiKey
                     },
                     body: JSON.stringify({
                         imageUrl: selectedImage.element.src,
