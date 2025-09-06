@@ -849,12 +849,12 @@
             console.log(`DinoOverlay: ${message}`);
         }
         
-        function clearLogs() {
+        window.clearLogs = function() {
             debugLog.textContent = '';
             log('Debug log cleared');
         }
         
-        async function testAPI() {
+        window.testAPI = async function() {
             log('Testing API connection...', 'info');
             try {
                 const response = await fetch('https://dino-overlay-system.vercel.app/api/overlay/chat', {
@@ -878,8 +878,8 @@
             }
         }
         
-        // Property Modal Functions
-        function openPropertyModal(propertyId) {
+        // Property Modal Functions (make globally accessible)
+        window.openPropertyModal = function(propertyId) {
             log(`📂 Opening property details: ${propertyId}`);
             const modal = document.getElementById(`${propertyId}-modal`);
             modal.classList.add('active');
@@ -890,13 +890,13 @@
             }, 300);
         }
         
-        function closePropertyModal(propertyId) {
+        window.closePropertyModal = function(propertyId) {
             log(`📂 Closing property details: ${propertyId}`);
             const modal = document.getElementById(`${propertyId}-modal`);
             modal.classList.remove('active');
         }
         
-        function changeMainImage(propertyId, newSrc, thumbnailElement) {
+        window.changeMainImage = function(propertyId, newSrc, thumbnailElement) {
             const mainImage = document.getElementById(`${propertyId}-main`);
             mainImage.src = newSrc;
             
@@ -1176,7 +1176,7 @@
             document.body.appendChild(chatBar);
         }
         
-        function clearSelection() {
+        window.clearSelection = function() {
             showChatBar = false;
             
             setTimeout(() => {
@@ -1214,7 +1214,7 @@
             log('🔒 DinoOverlay closed');
         }
         
-        function setMode(mode) {
+        window.setMode = function(mode) {
             log(`🔧 DinoOverlay mode set to: ${mode}`);
             
             // Update button states
@@ -1227,7 +1227,7 @@
             }
         }
         
-        function applyStyle(styleName) {
+        window.applyStyle = function(styleName) {
             const stylePrompts = {
                 scandi: 'Transform this room into a Scandinavian style with light woods, white walls, and minimalist furniture',
                 minimalist: 'Create a minimalist design with clean lines, neutral colors, and uncluttered space',
@@ -1243,7 +1243,7 @@
             processEdit(prompt);
         }
         
-        function sendChatMessage() {
+        window.sendChatMessage = function() {
             const chatInput = document.getElementById('dino-chat-input');
             const message = chatInput.value.trim();
             
