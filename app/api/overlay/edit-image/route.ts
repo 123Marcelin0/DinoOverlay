@@ -4,6 +4,7 @@ import { rateLimit } from '@/lib/rate-limit';
 import { validateApiKey } from '@/lib/auth';
 import { processImage } from '@/lib/image-processor';
 import { aiImageEdit } from '@/lib/ai-service';
+import { handleCors, withCors } from '@/lib/cors';
 
 // Request validation schema
 const editImageSchema = z.object({
@@ -16,29 +17,36 @@ const editImageSchema = z.object({
   }).optional(),
 });
 
+// Handle preflight OPTIONS request
+export async function OPTIONS(request: NextRequest) {
+  return handleCors(request);
+}
+
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  
   try {
     // Rate limiting
     const rateLimitResult = await rateLimit(request);
     if (!rateLimitResult.success) {
-      return NextResponse.json(
+      return withCors(NextResponse.json(
         { 
           success: false, 
           error: 'Rate limit exceeded. Please try again later.',
           retryAfter: rateLimitResult.retryAfter 
         },
         { status: 429 }
-      );
+      ), origin);
     }
 
     // API key validation
     const apiKey = request.headers.get('x-api-key');
     const authResult = await validateApiKey(apiKey);
     if (!authResult.valid) {
-      return NextResponse.json(
+      return withCors(NextResponse.json(
         { success: false, error: 'Invalid API key' },
         { status: 401 }
-      );
+      ), origin);
     }
 
     // Parse and validate request body
@@ -46,14 +54,14 @@ export async function POST(request: NextRequest) {
     const validationResult = editImageSchema.safeParse(body);
     
     if (!validationResult.success) {
-      return NextResponse.json(
+      return withCors(NextResponse.json(
         { 
           success: false, 
           error: 'Invalid request data',
           details: validationResult.error.errors 
         },
         { status: 400 }
-      );
+      ), origin);
     }
 
     const { imageData, prompt, imageUrl, context } = validationResult.data;
@@ -61,13 +69,13 @@ export async function POST(request: NextRequest) {
     // Process and validate image
     const imageProcessingResult = await processImage(imageData, imageUrl);
     if (!imageProcessingResult.success) {
-      return NextResponse.json(
+      return withCors(NextResponse.json(
         { 
           success: false, 
           error: imageProcessingResult.error 
         },
         { status: 400 }
-      );
+      ), origin);
     }
 
     // Add job to processing queue
@@ -89,12 +97,12 @@ export async function POST(request: NextRequest) {
     const waitForResult = request.headers.get('x-wait-for-result') === 'true';
     
     if (!waitForResult) {
-      return NextResponse.json({
+      return withCors(NextResponse.json({
         success: true,
         jobId,
         status: 'queued',
         message: 'Image processing job queued successfully',
-      });
+      }), origin);
     }
 
     // Wait for job completion
@@ -104,44 +112,44 @@ export async function POST(request: NextRequest) {
       const processingTime = Date.now() - startTime;
 
       if (completedJob.status === 'failed') {
-        return NextResponse.json(
+        return withCors(NextResponse.json(
           { 
             success: false, 
             error: completedJob.error || 'AI processing failed',
             jobId 
           },
           { status: 500 }
-        );
+        ), origin);
       }
 
       const aiResult = completedJob.result;
-      return NextResponse.json({
+      return withCors(NextResponse.json({
         success: true,
         editedImageUrl: aiResult.editedImageUrl,
         editedImageData: aiResult.editedImageData,
         processingTime,
         jobId,
-      });
+      }), origin);
 
     } catch (error) {
-      return NextResponse.json(
+      return withCors(NextResponse.json(
         { 
           success: false, 
           error: 'Processing timeout or error',
           jobId 
         },
         { status: 408 }
-      );
+      ), origin);
     }
 
   } catch (error) {
     console.error('Edit image API error:', error);
-    return NextResponse.json(
+    return withCors(NextResponse.json(
       { 
         success: false, 
         error: 'Internal server error' 
       },
       { status: 500 }
-    );
+    ), origin);
   }
 }
